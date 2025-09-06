@@ -387,7 +387,7 @@ const CartPage = () => {
               <div className="empty-cart-message">
                 <h2>Your cart is currently empty.</h2>
                 <p>Items added to your cart will appear here.</p>
-                <a href="#/">Explore Collections</a>
+                <a href="#/Shop">Explore Collections</a>
               </div>
             </div>
           )}

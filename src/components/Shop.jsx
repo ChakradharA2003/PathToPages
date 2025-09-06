@@ -208,7 +208,7 @@ const ShopPage = () => {
     .product-card {
       background: #fff;
       border-radius: 10px;
-      width: 300px;
+      width: 450px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
       overflow: hidden;
       display: flex;

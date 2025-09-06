@@ -1,79 +1,75 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Journal = () => {
+// The main component for displaying the bookmark product grid.
+const BookmarkPage = () => {
   const navigate = useNavigate();
-
-  // Journal product list
-  const [journals, setJournals] = useState([
+  // State to hold the list of bookmarks with their details.
+  const [bookmarks, setBookmarks] = useState([
     {
-      id: 201,
-      name: "Leather-Bound Journal",
-      price: 2500.0,
-      description:
-        "Hand-stitched leather cover with thick, cream-colored pages.",
-      image:
-        "https://i.pinimg.com/1200x/04/19/75/04197548c7016df0e3f283d231d6de2d.jpg",
+      id: 101,
+      name: "Journal Book",
+      price: 400.0,
+      description: "Journal book",
+      image: "https://placehold.co/600x400/EAE0D5/8E7968?text=Pearls",
       quantity: 1,
     },
-    {
-      id: 202,
-      name: "Canvas Field Notebook",
-      price: 1500.0,
-      description:
-        "Durable canvas cover, perfect for outdoor sketching and notes.",
-      image:
-        "https://i.pinimg.com/736x/52/64/5b/52645b4bf4a5e954cc2a501203a72990.jpg",
-      quantity: 1,
-    },
-    {
-      id: 203,
-      name: "Linen Softcover Diary",
-      price: 1800.0,
-      description: "Elegant linen cover with a delicate floral pattern.",
-      image:
-        "https://i.pinimg.com/736x/16/6a/9a/166a9a275cf4de93dfafdb2e43cc6fbd.jpg",
-      quantity: 1,
-    },
-    {
-      id: 204,
-      name: "Recycled Paper Sketchbook",
-      price: 1200.0,
-      description: "Eco-friendly journal with recycled kraft paper pages.",
-      image:
-        "https://i.pinimg.com/736x/24/26/07/24260783e4fb2fe6fa70363fe62a9eb3.jpg",
-      quantity: 1,
-    },
+    // {
+    //   id: 102,
+    //   name: "Jute Weaver Bookmark",
+    //   price: 750.0,
+    //   description: "Woven from natural, eco-friendly jute.",
+    //   image: "https://placehold.co/600x400/D4BBAA/FFFFFF?text=Jute",
+    //   quantity: 1,
+    // },
+    // {
+    //   id: 103,
+    //   name: "Tassel Charm Bookmark",
+    //   price: 950.0,
+    //   description: "Features a soft, handmade tassel.",
+    //   image: "https://placehold.co/600x400/C78C5C/FFFFFF?text=Tassel",
+    //   quantity: 1,
+    // },
+    // {
+    //   id: 104,
+    //   name: "Satin Ribbon Bookmark",
+    //   price: 600.0,
+    //   description: "A classic and smooth satin ribbon marker.",
+    //   image: "https://placehold.co/600x400/A2B5CD/FFFFFF?text=Ribbon",
+    //   quantity: 1,
+    // },
   ]);
 
+  // State for the notification message
   const [notification, setNotification] = useState("");
+  // State for the dark mode toggle
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Update journal quantity
+  // Function to handle quantity changes for a specific bookmark item.
   const handleQuantityChange = (id, amount) => {
-    setJournals((prev) =>
-      prev.map((journal) =>
-        journal.id === id
-          ? { ...journal, quantity: Math.max(1, journal.quantity + amount) }
-          : journal
+    setBookmarks((prev) =>
+      prev.map((bm) =>
+        bm.id === id
+          ? { ...bm, quantity: Math.max(1, bm.quantity + amount) }
+          : bm
       )
     );
   };
 
-  // Add journal to cart
-  const handleAddToCart = (journal) => {
+  // Function to handle adding a bookmark to the shopping cart.
+  const handleAddToCart = (bookmark) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existing = cart.find((item) => item.id === journal.id);
+    const existing = cart.find((item) => item.id === bookmark.id);
 
     if (existing) {
-      existing.quantity += journal.quantity;
+      existing.quantity += bookmark.quantity;
     } else {
-      cart.push({ ...journal });
+      cart.push({ ...bookmark });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    setNotification(`${journal.name} has been added to your cart!`);
+    setNotification(`${bookmark.name} has been added to your cart!`);
     setTimeout(() => {
       setNotification("");
       navigate("/cart");
@@ -81,463 +77,528 @@ const Journal = () => {
   };
 
   // Save journal to wishlist
-  const handleSaveToWishlist = (journal) => {
+  const handleSaveToWishlist = (bookmark) => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const existing = wishlist.find((item) => item.id === journal.id);
+    const existing = wishlist.find((item) => item.id === bookmark.id);
 
     if (!existing) {
-      wishlist.push(journal);
+      wishlist.push(bookmark);
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
     }
 
     navigate("/wishlist");
   };
 
-  // Toggle dark mode
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+
+
+  // Toggles the theme between light and dark
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   return (
     // The 'className' changes based on the 'isDarkMode' state, which triggers the CSS for dark mode.
     <>
       <style>
         {`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+
+    html { scroll-behavior: smooth; }
+
+    .bookmark-page {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fdf8f0;
+      padding: 4rem 2rem;
+      min-height: 100vh;
+      color: #5c544b;
+      transition: background-color 0.4s, color 0.4s;
+      position: relative;
+    }
     
-        html { scroll-behavior: smooth; }
+    /* Dark Mode Styles */
+    .bookmark-page.dark-mode {
+        background-color: #1a1d24;
+        color: #e0e0e0;
+    }
+    .bookmark-page.dark-mode .bookmark-header h1 {
+        color: #ffffff;
+    }
+    .bookmark-page.dark-mode .bookmark-header p {
+        color: #a0a0a0;
+    }
+    .bookmark-page.dark-mode .bookmark-card {
+        background-color: #2c303a;
+        color: #e0e0e0;
+        border-color: #4a4f5a;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .bookmark-page.dark-mode .bookmark-info h3 {
+        color: #ffffff;
+    }
+    .bookmark-page.dark-mode .bookmark-info p {
+        color: #a0a0a0;
+    }
+    .bookmark-page.dark-mode .bookmark-price {
+        color: #d4b38a;
+    }
+    .bookmark-page.dark-mode .quantity-control {
+        border-color: #4a4f5a;
+    }
+    .bookmark-page.dark-mode .quantity-control button {
+        color: #e0e0e0;
+    }
+    .bookmark-page.dark-mode .add-to-cart-btn {
+        background-color: #4a4f5a;
+        border-color: #4a4f5a;
+        color: #ffffff;
+    }
+    .bookmark-page.dark-mode .add-to-cart-btn:hover {
+        background-color: #5a5f6a;
+    }
+    .bookmark-page.dark-mode .styled-wrapper .button:before {
+        border-color: #ffffff;
+    }
+    .bookmark-page.dark-mode .button-elem svg {
+        fill: #ffffff;
+    }
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #3b3a30;
+        color: #fff;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        z-index: 1001;
+        animation: slideIn 0.5s ease forwards;
+    }
 
-        .journal-page {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f4ed;
-            padding: 4rem 2rem;
-            min-height: 100vh;
-            color: #3b3a30;
-            transition: background-color 0.4s, color 0.4s;
-            position: relative;
-            overflow: hidden; /* Hide overflow for the star animation */
-        }
+    @keyframes slideIn {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+    }
 
-        .journal-page.dark-mode {
-            background-color: #000000;
-            color: #e0e0e0;
-        }
-        
-        .journal-page.dark-mode .journal-header h1 {
-            color: #ffffff;
-        }
-        
-        .journal-page.dark-mode .journal-header p {
-            color: #a0a0a0;
-        }
+    .bookmark-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .journal-page.dark-mode .journal-card {
-            background-color: #2c303a;
-            color: #e0e0e0;
-            box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.5);
-        }
+    .bookmark-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
 
-        .journal-page.dark-mode .journal-name, .journal-page.dark-mode .journal-price {
-            color: #ffffff;
-        }
-        
-        .journal-page.dark-mode .styled-wrapper .button:before {
-            border-color: #ffffff;
-        }
-        
-        .journal-page.dark-mode .button-elem svg {
-            fill: #ffffff;
-        }
-        
-        .journal-page.dark-mode .quantity-control button {
-            background-color: #4a5568;
-            color: #e0e0e0;
-        }
-        
-        .journal-page.dark-mode .CartBtn {
-            background-color: #4a5568;
-            color: #e0e0e0;
-        }
-        
-        .journal-page.dark-mode .CartBtn:hover {
-            background-color: #2d3748;
-        }
-        
-        .journal-page.dark-mode .save-btn {
-            background-color: #2d3748;
-            color: #e0e0e0;
-        }
-        
-        .journal-page.dark-mode .save-btn:hover {
-            background-color: #1a202c;
-        }
+    .bookmark-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      color: #5c544b;
+      margin: 0;
+      transition: color 0.4s;
+    }
 
-        .journal-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 20; /* Ensure content is above the animation */
-        }
+    .bookmark-header p {
+      font-size: 1.2rem;
+      color: #9a8c82;
+      margin-top: 0.5rem;
+      transition: color 0.4s;
+    }
 
-        .journal-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
+    .bookmark-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+    }
 
-        .journal-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            color: #3b3a30;
-            margin: 0;
-            transition: color 0.4s;
-            overflow: hidden;
-        }
+    .bookmark-card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #e0dccc;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s, color 0.4s;
+    }
 
-        .journal-header p {
-            font-size: 1.2rem;
-            color: #8c887e;
-            margin-top: 0.5rem;
-            transition: color 0.4s;
-        }
+    .bookmark-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+    }
 
-        .journal-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
+    .bookmark-image img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
 
-        .journal-card {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
+    .bookmark-info {
+      padding: 1.5rem;
+      text-align: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .journal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
+    .bookmark-info h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 0 0 0.5rem;
+      font-size: 1.4rem;
+      transition: color 0.4s;
+    }
 
-        .journal-image {
-            height: 220px;
-            width: 100%;
-            background-size: cover;
-            background-position: center;
-        }
+    .bookmark-info p {
+      color: #9a8c82;
+      flex-grow: 1;
+      transition: color 0.4s;
+    }
 
-        .journal-content {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            flex-grow: 1;
-        }
+    .bookmark-price {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #b99a6b;
+      margin: 1rem 0;
+      transition: color 0.4s;
+    }
 
-        .journal-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: auto;
-        }
+    .controls-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
 
-        .journal-price {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #555;
-        }
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid #e0dccc;
+      border-radius: 50px;
+      transition: border-color 0.4s;
+    }
 
-        .controls-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-            margin-top: 1rem;
-        }
+    .quantity-control button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      color: #5c544b;
+      transition: color 0.4s;
+    }
 
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    .add-to-cart-btn {
+      padding: 0.8rem 1.5rem;
+      border: 1px solid #b99a6b;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background-color: #b99a6b;
+      color: #fff;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
 
-        .quantity-control button {
-            background-color: #e2e8f0;
-            color: #4a5568;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .add-to-cart-btn:hover {
+      background-color: #a3875a;
+    }
+    
+    /* --- Back Button Styles --- */
+    .styled-wrapper {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+    }
+    .styled-wrapper .button {
+      display: block;
+      position: relative;
+      width: 56px;
+      height: 56px;
+      margin: 0;
+      overflow: hidden;
+      outline: none;
+      background-color: transparent;
+      cursor: pointer;
+      border: 0;
+    }
 
-        .quantity-control button:hover {
-            background-color: #cbd5e0;
-        }
+    .styled-wrapper .button:before {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      inset: 7px;
+      border: 3px solid #5c544b;
+      transition:
+        opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms,
+        transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms,
+        border-color 0.4s;
+    }
 
-        .CartBtn, .save-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            width: 100%;
-            max-width: 250px;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+    .styled-wrapper .button:after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      inset: 7px;
+      border: 4px solid #599a53;
+      transform: scale(1.3);
+      transition:
+        opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+        transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+    }
 
-        .CartBtn {
-            background-color: #38b2ac;
-            color: white;
-            box-shadow: 0 4px 10px rgba(56, 178, 172, 0.2);
-        }
+    .styled-wrapper .button:hover:before,
+    .styled-wrapper .button:focus:before {
+      opacity: 0;
+      transform: scale(0.7);
+    }
 
-        .CartBtn:hover {
-            background-color: #319795;
-            transform: translateY(-2px);
-        }
+    .styled-wrapper .button:hover:after,
+    .styled-wrapper .button:focus:after {
+      opacity: 1;
+      transform: scale(1);
+    }
 
-        .CartBtn .IconContainer {
-            margin-right: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .styled-wrapper .button-box {
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
 
-        .save-btn {
-            position: relative;
-            font-family: 'Poppins', sans-serif;
-            background-color: #cbd5e0;
-            color: #4a5568;
-            box-shadow: 0 4px 10px rgba(203, 213, 224, 0.2);
-            overflow: hidden;
-            border: 2px solid #a0aec0;
-            text-align: center;
-            padding: 0.6rem 1.5rem;
-        }
+    .styled-wrapper .button-elem {
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin: 18px;
+      transform: rotate(360deg);
+    }
+    
+    .styled-wrapper .button-elem svg {
+        fill: #5c544b;
+        transition: fill 0.4s;
+    }
 
-        .save-btn:hover {
-            background-color: #a0aec0;
-            color: #2d3748;
-        }
+    .styled-wrapper .button:hover .button-box,
+    .styled-wrapper .button:focus .button-box {
+      transition: 0.4s;
+      transform: translateX(-56px);
+    }
 
-        .save-btn .svg-wrapper-1 {
-            position: relative;
-            display: inline-block;
-            vertical-align: middle;
-        }
+    /* --- Theme Toggle Switch Styles --- */
+    .theme-toggle-wrapper {
+        position: absolute;
+        top: 1.5rem;
+        right: 2rem;
+        z-index: 1000;
+    }
+    
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
 
-        .save-btn .svg-wrapper {
-            display: inline-block;
-        }
+    .switch #theme-toggle-input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #2d3748;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1001;
-            animation: slide-in 0.5s ease-out forwards;
-        }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2196f3;
+      transition: 0.4s;
+      z-index: 0;
+      overflow: hidden;
+    }
 
-        @keyframes slide-in {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .back-button-wrapper { 
-            position: fixed; 
-            top: 1.5rem; 
-            left: 1.5rem; 
-            z-index: 1000; 
-        }
-        .back-button { 
-            display: block; 
-            position: relative; 
-            width: 44px; 
-            height: 44px; 
-            margin: 0; 
-            overflow: hidden; 
-            outline: none; 
-            background-color: transparent; 
-            cursor: pointer; 
-            border: 0; 
-        }
-        .back-button:before { 
-            content: ""; 
-            position: absolute; 
-            border-radius: 50%; 
-            inset: 5px; 
-            border: 2px solid var(--text-color); 
-            transition: all 0.4s; 
-        }
-        .back-button:after { 
-            content: ""; 
-            position: absolute; 
-            border-radius: 50%; 
-            inset: 5px; 
-            border: 3px solid #599a53; 
-            transform: scale(1.3); 
-            transition: all 0.4s; 
-            opacity: 0; 
-        }
-        .back-button:hover:before, .back-button:focus:before { 
-            opacity: 0; 
-            transform: scale(0.7); 
-        }
-        .back-button:hover:after, .back-button:focus:after { 
-            opacity: 1; 
-            transform: scale(1); 
-        }
-        .back-button-box { 
-            display: flex; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-        }
-        .back-button-elem { 
-            display: block; 
-            width: 16px; 
-            height: 16px; 
-            margin: 14px; 
-            transform: rotate(360deg); 
-        }
-        .back-button-elem svg { 
-            fill: var(--text-color); 
-            transition: fill 0.4s; 
-        }
-        .back-button:hover .back-button-box, .back-button:focus .back-button-box { 
-            transition: 0.4s; 
-            transform: translateX(-44px); 
-        }
-        `}
+    .sun-moon {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: yellow;
+      transition: 0.4s;
+    }
+.add-to-wishlist-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.add-to-wishlist-btn:hover {
+  background-color: #ff1493;
+}
+
+    #theme-toggle-input:checked + .slider {
+      background-color: black;
+    }
+
+    #theme-toggle-input:checked + .slider .sun-moon {
+      transform: translateX(26px);
+      background-color: white;
+      animation: rotate-center 0.6s ease-in-out both;
+    }
+
+    .moon-dot {
+      opacity: 0;
+      transition: 0.4s;
+      fill: gray;
+    }
+
+    #theme-toggle-input:checked + .slider .sun-moon .moon-dot {
+      opacity: 1;
+    }
+
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round .sun-moon {
+      border-radius: 50%;
+    }
+    #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
+    #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
+    #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+
+    .cloud-light, .cloud-dark {
+      position: absolute;
+      animation-name: cloud-move;
+      animation-duration: 6s;
+      animation-iteration-count: infinite;
+    }
+    .cloud-light { fill: #eee; }
+    .cloud-dark { fill: #ccc; animation-delay: 1s; }
+
+    #cloud-1 { left: 30px; top: 15px; width: 40px; }
+    #cloud-2 { left: 44px; top: 10px; width: 20px; }
+    #cloud-3 { left: 18px; top: 24px; width: 30px; }
+    #cloud-4 { left: 36px; top: 18px; width: 40px; }
+    #cloud-5 { left: 48px; top: 14px; width: 20px; }
+    #cloud-6 { left: 22px; top: 26px; width: 30px; }
+
+    @keyframes cloud-move {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(5px); }
+    }
+
+    .stars {
+      transform: translateY(-32px);
+      opacity: 0;
+      transition: 0.4s;
+    }
+
+    .star {
+      fill: white;
+      position: absolute;
+      transition: 0.4s;
+      animation-name: star-twinkle;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    #theme-toggle-input:checked + .slider .stars {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
+    #star-2 { width: 6px; top: 16px; left: 3px; }
+    #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
+    #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+
+    @keyframes star-twinkle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+    
+    @keyframes rotate-center {
+      0% { transform: translateX(0) rotate(0); }
+      100% { transform: translateX(26px) rotate(360deg); }
+    }
+    
+    @media (max-width: 600px) {
+        .bookmark-page { padding: 2rem 1rem; }
+        .bookmark-header h1 { font-size: 2.5rem; }
+        .bookmark-header p { font-size: 1rem; }
+        .bookmark-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        .styled-wrapper { top: 0.5rem; left: 0.5rem; }
+        .theme-toggle-wrapper { top: 1rem; right: 1rem; }
+    }
+ `}
       </style>
-      <div className={`journal-page ${isDarkMode ? "dark-mode" : ""}`}>
-        {/* Back Button */}
-        <div className="back-button-wrapper">
-          <button
-            className="back-button"
-            onClick={() => navigate(-1)}
-            aria-label="Go back"
-          >
-            <div className="back-button-box">
-              <span className="back-button-elem">
-                <svg viewBox="0 0 24 24">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+      <div className={`bookmark-page ${isDarkMode ? "dark-mode" : ""}`}>
+        <div className="styled-wrapper">
+          <button className="button" onClick={() => window.history.back()}>
+            <div className="button-box">
+              <span className="button-elem">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
                 </svg>
               </span>
-              <span className="back-button-elem">
-                <svg viewBox="0 0 24 24">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+              <span className="button-elem">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
                 </svg>
               </span>
             </div>
           </button>
         </div>
 
-        {/* Notification */}
         {notification && <div className="notification">{notification}</div>}
+        <div className="bookmark-container">
+          <header className="bookmark-header">
+            <h1>Handcrafted Bookmarks</h1>
+            <p>Mark your page with a touch of elegance.</p>
+          </header>
 
-        {/* Journal Collection */}
-        <div className="journal-container">
-          <div className="journal-header">
-            <h1>Our Journal Collection</h1>
-            <p>
-              Handcrafted journals for your thoughts, dreams, and adventures.
-            </p>
-          </div>
-
-          <div className="journal-grid">
-            {journals.map((journal) => (
-              <div key={journal.id} className="journal-card">
-                <div
-                  className="journal-image"
-                  style={{ backgroundImage: `url(${journal.image})` }}
-                ></div>
-
-                <div className="journal-content">
-                  <h3 className="journal-name">{journal.name}</h3>
-                  <p className="journal-price">₹{journal.price.toFixed(2)}</p>
-
-                  {/* Quantity + Actions */}
+          <div className="bookmark-grid">
+            {bookmarks.map((bm) => (
+              <div key={bm.id} className="bookmark-card">
+                <div className="bookmark-image">
+                  <img src={bm.image} alt={bm.name} />
+                </div>
+                <div className="bookmark-info">
+                  <h3>{bm.name}</h3>
+                  <p>{bm.description}</p>
+                  <div className="bookmark-price">₹{bm.price.toFixed(2)}</div>
                   <div className="controls-container">
                     <div className="quantity-control">
-                      <button
-                        onClick={() => handleQuantityChange(journal.id, -1)}
-                      >
-                        -
+                      <button onClick={() => handleQuantityChange(bm.id, -1)}>
+                        −
                       </button>
-                      <span>{journal.quantity}</span>
-                      <button
-                        onClick={() => handleQuantityChange(journal.id, 1)}
-                      >
+                      <span>{bm.quantity}</span>
+                      <button onClick={() => handleQuantityChange(bm.id, 1)}>
                         +
                       </button>
                     </div>
-
-                    {/* Add to Cart */}
                     <button
-                      className="CartBtn"
-                      onClick={() => handleAddToCart(journal)}
+                      className="add-to-cart-btn"
+                      onClick={() => handleAddToCart(bm)}
                     >
-                      <span className="IconContainer">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 576 512"
-                          fill="white"
-                          height="1em"
-                          className="cart"
-                        >
-                          <path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z" />
-                        </svg>
-                      </span>
-                      <p className="text">Add to Cart</p>
+                      Add to Cart
                     </button>
-
-                    {/* Save to Wishlist */}
                     <button
-                      className="save-btn"
-                      onClick={() => handleSaveToWishlist(journal)}
+                      className="add-to-wishlist-btn"
+                      onClick={() => handleSaveToWishlist(bm)}
                     >
-                      <div className="svg-wrapper-1">
-                        <div className="svg-wrapper">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M20 12V7H4v14h9.5M18 5L20 7L22 5" />
-                            <path d="M12 2v20c0-10 1-12 5-16s7 5 7 5" />
-                            <path d="M4 14l9 9" />
-                          </svg>
-                        </div>
-                      </div>
-                      <span>Save</span>
+                      Add to Wishlist
                     </button>
                   </div>
                 </div>
@@ -550,4 +611,4 @@ const Journal = () => {
   );
 };
 
-export default Journal;
+export default BookmarkPage;

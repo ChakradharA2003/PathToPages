@@ -1,648 +1,729 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const Home = () => {
-  // State for user data
-  const [userData, setUserData] = useState({
-    name: "Wade Armstrong",
-    dob: "December 24, 1991",
-    gender: "Male",
-    email: "wade.armstrong@email.com",
-    username: "wadearmstrong28",
-    password: "••••••••••",
-  });
+// --- SVG Icons ---
+// Using inline SVGs is a good practice in React to avoid extra HTTP requests.
+const UserIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
+const OrdersIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <path d="M16 10a4 4 0 0 1-8 0"></path>
+  </svg>
+);
+const BillingIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+    <line x1="1" y1="10" x2="23" y2="10"></line>
+  </svg>
+);
+const SettingsIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+  </svg>
+);
+const LogoutIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" y1="12" x2="9" y2="12"></line>
+  </svg>
+);
 
-  // State for profile picture
-  const [profilePic, setProfilePic] = useState(
-    "https://placehold.co/128x128/f9a8d4/fce7f3?text=WA"
-  );
-  const fileInputRef = useRef(null);
+const BackButtonIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="19" y1="12" x2="5" y2="12"></line>
+    <polyline points="12 19 5 12 12 5"></polyline>
+  </svg>
+);
 
-  // State to manage which section is in edit mode
-  const [editMode, setEditMode] = useState({
-    basicInfo: false,
-    accountInfo: false,
-  });
+const MyAccount = () => {
+  const [activeTab, setActiveTab] = useState("profile");
+  const contentRef = useRef(null);
+  const isFirstRun = useRef(true);
 
-  // State for other settings
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: false,
-    monthlyReports: true,
-  });
-  const [privacy, setPrivacy] = useState({
-    profilePublic: true,
-    twoFactor: false,
-  });
-  const [language, setLanguage] = useState("english");
-
-  // State for mobile sidebar
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Temporary state to hold edits
-  const [tempUserData, setTempUserData] = useState(userData);
-
-  // Load profile picture from local storage on initial render
+  // This useEffect handles the GSAP intro animation on component mount.
   useEffect(() => {
-    const savedPic = localStorage.getItem("profilePic");
-    if (savedPic) {
-      setProfilePic(savedPic);
-    }
+    // We add a small delay to give the async scripts a better chance to load before we use them.
+    const timer = setTimeout(() => {
+      if (window.gsap) {
+        window.gsap.from(".account-container", {
+          duration: 0.8,
+          opacity: 0,
+          y: 50,
+          ease: "power3.out",
+        });
+        window.gsap.from(".sidebar-nav li", {
+          duration: 0.6,
+          opacity: 0,
+          x: -30,
+          stagger: 0.1,
+          delay: 0.4,
+          ease: "power2.out",
+        });
+        window.gsap.from(".profile-header", {
+          duration: 0.7,
+          opacity: 0,
+          scale: 0.9,
+          delay: 0.2,
+          ease: "back.out(1.7)",
+        });
+        // Animate the initial content section on load
+        window.gsap.from(contentRef.current, {
+          duration: 0.5,
+          opacity: 0,
+          y: 20,
+          delay: 0.6,
+          ease: "power2.out",
+        });
+      }
+    }, 100); // 100ms delay
+
+    return () => clearTimeout(timer); // Cleanup the timer
   }, []);
 
-  // Function to handle profile picture update
-  const handleProfilePicChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const newPic = reader.result;
-        setProfilePic(newPic);
-        localStorage.setItem("profilePic", newPic);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Function to handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setTempUserData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Function to toggle edit mode and save/cancel changes
-  const toggleEditMode = (section, save = false) => {
-    if (save) {
-      setUserData(tempUserData);
-    } else {
-      setTempUserData(userData); // Reset temp data on cancel
-    }
-    setEditMode((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
-
+  // This useEffect handles animations for subsequent tab changes.
   useEffect(() => {
-    const sidebarItems = document.querySelectorAll("aside ul li");
-    const contentSections = {
-      Account: document.getElementById("account-content"),
-      Notifications: document.getElementById("notifications-content"),
-      Privacy: document.getElementById("privacy-content"),
-      Languages: document.getElementById("languages-content"),
-      Help: document.getElementById("help-content"),
-    };
+    // We skip the animation on the first render because the mount animation handles it.
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
 
-    sidebarItems.forEach((item) => {
-      item.addEventListener("click", (e) => {
-        sidebarItems.forEach((li) => li.classList.remove("active"));
+    if (contentRef.current && window.gsap) {
+      // Animate the content section when a new tab is selected
+      window.gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 30 },
+        { duration: 0.5, opacity: 1, y: 0, ease: "power3.out" }
+      );
+    }
+  }, [activeTab]);
 
-        const currentTarget = e.currentTarget;
-        currentTarget.classList.add("active");
+  // Function to handle tab changes
+  const handleTabClick = (e, tab) => {
+    e.preventDefault();
+    setActiveTab(tab);
+  };
 
-        const label = currentTarget.querySelector("span").textContent;
+  // --- RENDERABLE CONTENT FOR EACH TAB ---
+  const renderContent = () => {
+    switch (activeTab) {
+      case "profile":
+        return <ProfileSection />;
+      case "orders":
+        return <OrdersSection />;
+      case "billing":
+        return <BillingSection />;
+      case "settings":
+        return <SettingsSection />;
+      default:
+        return <ProfileSection />;
+    }
+  };
 
-        Object.values(contentSections).forEach(
-          (section) => (section.style.display = "none")
-        );
-        if (contentSections[label]) {
-          contentSections[label].style.display = "block";
-        }
-        setIsSidebarOpen(false); // Close sidebar on item click
-      });
-    });
-  }, []);
-
-  const InfoRow = ({ label, value, name, isEditing, onChange }) => (
-    <div className="info-row">
-      <div className="info-row-content">
-        <p className="info-label">{label}</p>
-        {isEditing ? (
-          <input
-            type={name === "password" ? "password" : "text"}
-            name={name}
-            value={value}
-            onChange={onChange}
-            className="info-input"
-          />
-        ) : (
-          <p className="info-value">{value}</p>
-        )}
-      </div>
-      {!isEditing && <i className="fas fa-chevron-right info-chevron"></i>}
-    </div>
-  );
+  // --- MOCK DATA ---
+  const user = {
+    name: "Alexender Smith",
+    email: "alex.smith@business.com",
+    memberSince: "Jan 20, 2024",
+    avatar: "https://placehold.co/100x100/EFEFEF/333?text=AS",
+  };
 
   return (
     <>
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"
+        async
+      ></script>
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"
+        async
+      ></script>
+
       <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+                :root {
+                    --primary-color: #4a90e2;
+                    --secondary-color: #50e3c2;
+                    --background-color: #f4f7f6;
+                    --card-background: #ffffff;
+                    --text-color: #333;
+                    --text-light: #777;
+                    --border-color: #eaeaea;
+                    --shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+                    --border-radius: 12px;
+                }
+
                 body {
-                    font-family: 'Inter', sans-serif;
+                    font-family: 'Poppins', sans-serif;
+                    background-color: var(--background-color);
+                    color: var(--text-color);
                     margin: 0;
                 }
-                .container {
-                    background-color: #fdf2f8;
-                    position: relative;
-                    min-height: 100vh;
+
+                .account-container {
+                    display: flex;
+                    width: 100%;
+                    height: 100vh;
+                    background-color: var(--card-background);
+                    overflow: hidden;
+                }
+
+                /* Sidebar Styles */
+                .sidebar {
+                    width: 260px;
+                    background-color: #fdfdfd;
+                    padding: 30px 20px;
+                    border-right: 1px solid var(--border-color);
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .back-btn {
+                    background: transparent;
+                    border: none;
+                    cursor: pointer;
+                    color: var(--text-light);
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    align-self: flex-start;
+                    border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 1rem;
-                    overflow-x: hidden;
+                    width: 44px;
+                    height: 44px;
+                    transition: background-color 0.3s, color 0.3s;
                 }
-                .background-blob {
-                    position: absolute;
-                    border-radius: 9999px;
-                    opacity: 0.6;
-                    mix-blend-mode: multiply;
-                    filter: blur(24px);
-                    animation: blob 7s infinite;
+
+                .back-btn:hover {
+                    background-color: #f0f0f0;
                 }
-                .blob-1 { top: 2.5rem; left: 2.5rem; width: 12rem; height: 12rem; background-color: #fce7f3; }
-                .blob-2 { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 18rem; height: 18rem; background-color: #fbcfe8; animation-delay: 2s; }
-                .blob-3 { bottom: 5rem; right: 5rem; width: 16rem; height: 16rem; background-color: #fce7f3; animation-delay: 4s; }
-                
-                @keyframes blob { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0, 0) scale(1); } }
-                
-                .main-card {
-                    background-color: white;
-                    border-radius: 1.5rem;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                    padding: 2rem;
-                    width: 100%;
-                    max-width: 72rem;
+
+                .profile-header {
                     display: flex;
-                    position: relative;
-                    z-index: 10;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    margin-bottom: 40px;
                 }
-                .mobile-header { display: none; }
-                
-                .sidebar { width: 25%; padding: 1rem; border-radius: 1.5rem; background-color: rgba(249, 250, 251, 0.5); transition: transform 0.3s ease-in-out; }
-                .sidebar h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: #1f2937; }
-                .sidebar ul { list-style: none; padding: 0; margin: 0; }
-                .sidebar li { display: flex; align-items: center; padding: 0.75rem; border-radius: 1rem; cursor: pointer; transition: all 0.2s ease-in-out; color: #4b5563; }
-                .sidebar li:hover { background-color: #f3f4f6; }
-                .sidebar li.active { background-color: #fbcfe8; color: #be185d; font-weight: 500; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
-                .sidebar li i { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; }
 
-                .main-content { width: 75%; padding: 2rem; }
-                .desktop-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-                .desktop-header .header-title { display: flex; align-items: center; }
-                .desktop-header .back-arrow { color: #4b5563; transition: color 0.2s; margin-right: 1rem; }
-                .desktop-header .back-arrow:hover { color: #1f2937; }
-                .desktop-header h1 { font-size: 1.875rem; font-weight: 600; color: #1f2937; }
-                .profile-pic-header { width: 3rem; height: 3rem; border-radius: 9999px; background-color: #d1d5db; overflow: hidden; }
-                .profile-pic-header img { width: 100%; height: 100%; object-fit: cover; }
-                
-                .content-section { display: block; }
-                .content-section.hidden { display: none; }
-                .section-title { font-size: 1.25rem; font-weight: 600; color: #1f2937; }
-                .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-                
-                .profile-upload-section { display: flex; align-items: center; margin-bottom: 1.5rem; }
-                .profile-pic-container { position: relative; width: 8rem; height: 8rem; border-radius: 9999px; overflow: hidden; margin-right: 1.5rem; cursor: pointer; }
-                .profile-pic-container img { width: 100%; height: 100%; object-fit: cover; }
-                .upload-icon { position: absolute; bottom: 0; right: 0; padding: 0.25rem; background-color: white; border-radius: 9999px; }
-                .upload-icon i { color: #db2777; }
-                .upload-text p:first-child { font-weight: 600; font-size: 1.125rem; color: #1f2937; }
-                .upload-text p:last-child { color: #6b7280; font-size: 0.875rem; }
-
-                .info-row { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb; padding: 0.75rem 0; }
-                .info-row-content { flex: 1; }
-                .info-label { color: #6b7280; font-size: 0.875rem; font-weight: 500; }
-                .info-value { color: #1f2937; font-weight: 600; }
-                .info-input { font-weight: 600; background-color: #f9fafb; border-radius: 0.25rem; padding: 0.25rem; width: 100%; margin-top: 0.25rem; border: 1px solid #e5e7eb; }
-                .info-chevron { color: #9ca3af; }
-
-                .delete-account-btn { font-size: 0.875rem; color: #ef4444; font-weight: 600; transition: color 0.2s; border: none; background: none; cursor: pointer; }
-                .delete-account-btn:hover { color: #b91c1c; }
-                
-                .settings-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background-color: #f9fafb; border-radius: 0.5rem; }
-                .settings-card p:first-child { font-weight: 600; }
-                .settings-card p:last-child { font-size: 0.875rem; color: #6b7280; }
-                
-                .toggle-switch { position: relative; display: inline-block; width: 2.5rem; margin-right: 0.5rem; vertical-align: middle; user-select: none; transition: all 0.2s ease-in; }
-                .toggle-checkbox { position: absolute; display: block; width: 1.5rem; height: 1.5rem; border-radius: 9999px; background-color: white; border: 4px solid transparent; appearance: none; cursor: pointer; }
-                .toggle-label { display: block; overflow: hidden; height: 1.5rem; border-radius: 9999px; background-color: #d1d5db; cursor: pointer; }
-                .toggle-checkbox:checked { right: 0; border-color: #ec4899; }
-                .toggle-checkbox:checked + .toggle-label { background-color: #ec4899; }
-
-                .language-select { margin-top: 0.25rem; display: block; width: 100%; padding: 0.5rem 2.5rem 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.375rem; }
-                .language-select:focus { outline: none; ring: 2px solid #fb7185; border-color: #fb7185; }
-
-                .help-list { list-style: disc; padding-left: 1.25rem; color: #db2777; }
-                .help-list a { transition: text-decoration 0.2s; }
-                .help-list a:hover { text-decoration: underline; }
-                .contact-link { color: #db2777; transition: text-decoration 0.2s; }
-                .contact-link:hover { text-decoration: underline; }
-
-                .edit-button {
-                    background-color: #f3f4f6; color: #374151; padding: 0.5rem 1rem; border-radius: 0.5rem;
-                    font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease;
-                    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); border: none; cursor: pointer;
+                .profile-avatar {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    margin-bottom: 15px;
+                    border: 3px solid var(--primary-color);
                 }
-                .edit-button:hover {
-                    background-color: #e5e7eb;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+                .profile-name {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    margin: 0;
+                }
+
+                .profile-email {
+                    font-size: 0.85rem;
+                    color: var(--text-light);
+                }
+                
+                .sidebar-nav {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    flex-grow: 1;
+                }
+
+                .sidebar-nav li {
+                    margin-bottom: 10px;
+                }
+
+                .sidebar-nav a {
+                    display: flex;
+                    align-items: center;
+                    padding: 12px 15px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text-light);
+                    font-weight: 500;
+                    transition: background-color 0.3s, color 0.3s;
+                }
+
+                .sidebar-nav a svg {
+                    margin-right: 15px;
+                    width: 20px;
+                    height: 20px;
+                }
+                
+                .sidebar-nav a.active,
+                .sidebar-nav a:hover {
+                    background-color: var(--primary-color);
+                    color: white;
+                }
+
+                .logout-btn {
+                    display: flex;
+                    align-items: center;
+                    padding: 12px 15px;
+                    border: none;
+                    background: transparent;
+                    color: var(--text-light);
+                    font-weight: 500;
+                    font-size: 1rem;
+                    font-family: 'Poppins', sans-serif;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    width: 100%;
+                    transition: background-color 0.3s, color 0.3s;
+                }
+
+                .logout-btn:hover {
+                     background-color: #ff4d4d;
+                     color: white;
+                }
+                
+                .logout-btn svg {
+                     margin-right: 15px;
+                }
+
+                /* Main Content Styles */
+                .main-content {
+                    flex: 1;
+                    padding: 40px;
+                    overflow-y: auto;
+                }
+
+                .content-header {
+                    margin-bottom: 30px;
+                }
+
+                .content-header h1 {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    margin: 0;
+                }
+                
+                .content-header p {
+                    color: var(--text-light);
+                    margin-top: 5px;
+                }
+                
+                .form-group {
+                    margin-bottom: 25px;
+                }
+
+                .form-group label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    font-size: 0.9rem;
+                }
+
+                .form-group input {
+                    width: 100%;
+                    padding: 12px 15px;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 1rem;
+                    transition: border-color 0.3s, box-shadow 0.3s;
+                }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+                }
+
+                .action-button {
+                    padding: 12px 25px;
+                    border: none;
+                    background-image: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                    color: white;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: transform 0.2s, box-shadow 0.3s;
+                }
+
+                .action-button:hover {
                     transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
                 }
-                .save-button { background-color: #ec4899; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; }
-                .cancel-button { background-color: #e5e7eb; color: #374151; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; }
+
+                /* Order History Styles */
+                .order-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .order-table th, .order-table td {
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 1px solid var(--border-color);
+                }
+                .order-table th {
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    color: var(--text-light);
+                }
+                .status {
+                    padding: 5px 10px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                }
+                .status.delivered { background-color: #d4edda; color: #155724; }
+                .status.pending { background-color: #fff3cd; color: #856404; }
+                .status.cancelled { background-color: #f8d7da; color: #721c24; }
                 
-                .hamburger { display: none; cursor: pointer; }
-                .hamburger input { display: none; }
-                .hamburger svg { height: 2em; transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1); }
-                .line { fill: none; stroke: #1f2937; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1); }
-                .line-top-bottom { stroke-dasharray: 12 63; }
-                .hamburger input:checked + svg { transform: rotate(-45deg); }
-                .hamburger input:checked + svg .line-top-bottom { stroke-dasharray: 20 300; stroke-dashoffset: -32.42; }
-
-                .overlay { display: none; }
-
-                /* Media Queries */
+                /* Responsive Media Queries */
+                
+                /* For Tablets */
                 @media (max-width: 1024px) {
-                    .main-card { flex-direction: column; }
-                    .sidebar, .main-content { width: 100%; }
-                    .sidebar { margin-bottom: 1rem; }
-                    .desktop-header { display: none; }
-                    .mobile-header { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-                }
-
-                @media (max-width: 768px) {
-                    .container { padding: 0; }
-                    .main-card { border-radius: 0; min-height: 100vh; }
                     .sidebar {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        height: 100%;
-                        z-index: 100;
-                        transform: translateX(-100%);
-                        background-color: white;
-                        width: 80%;
-                        max-width: 300px;
+                        width: 220px;
                     }
-                    .sidebar.open { transform: translateX(0); }
-                    .hamburger { display: block; z-index: 101; }
-                    .overlay {
-                        display: block;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background-color: rgba(0,0,0,0.5);
-                        z-index: 99;
+                    .main-content {
+                        padding: 30px;
                     }
-                    .mobile-header { padding: 1rem; }
-                    .mobile-header h2 { font-size: 1.25rem; }
+                    .content-header h1 {
+                        font-size: 1.8rem;
+                    }
                 }
+                
+                /* For Mobile Phones */
+                @media (max-width: 768px) {
+                    body {
+                        padding: 0;
+                    }
+                    .account-container {
+                        flex-direction: column;
+                        height: 100vh;
+                        border-radius: 0;
+                    }
+                    .sidebar {
+                        width: 100%;
+                        border-right: none;
+                        border-bottom: 1px solid var(--border-color);
+                        padding: 10px 15px;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: flex-start;
+                    }
+                    .back-btn {
+                        margin-bottom: 0;
+                        margin-right: 10px;
+                    }
+                    .profile-header {
+                        display: none; /* Hide header in mobile, nav is enough */
+                    }
+                    .sidebar-nav {
+                        display: flex;
+                        width: 100%;
+                        justify-content: space-around;
+                    }
+                    .sidebar-nav li {
+                       flex: 1;
+                       text-align: center;
+                    }
+                     .sidebar-nav a {
+                        justify-content: center;
+                     }
+                    .sidebar-nav a span {
+                        display: none; /* Hide text, show only icons */
+                    }
+                    .sidebar-nav a svg {
+                        margin-right: 0;
+                    }
+                    .logout-btn {
+                        display: none; /* Can be moved inside a dropdown menu */
+                    }
+                    .main-content {
+                        padding: 20px;
+                        flex-grow: 1;
+                    }
+                }
+
             `}</style>
-      {isSidebarOpen && (
-        <div className="overlay" onClick={() => setIsSidebarOpen(false)}></div>
-      )}
-      <div className="container">
-        {/* Background blobs */}
-        <div className="background-blob blob-1"></div>
-        <div className="background-blob blob-2"></div>
-        <div className="background-blob blob-3"></div>
 
-        {/* Main card container */}
-        <div className="main-card">
-          {/* Header (mobile) */}
-          <header className="mobile-header">
-            <div className="header-title">
-              <label className="hamburger">
-                <input
-                  type="checkbox"
-                  checked={isSidebarOpen}
-                  onChange={() => setIsSidebarOpen(!isSidebarOpen)}
-                />
-                <svg viewBox="0 0 32 32">
-                  <path
-                    className="line line-top-bottom"
-                    d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
-                  ></path>
-                  <path className="line" d="M7 16 27 16"></path>
-                </svg>
-              </label>
-              <a href="/" className="back-arrow" style={{ marginLeft: "1rem" }}>
-                <i className="fas fa-arrow-left"></i>
+      <div className="account-container">
+        <aside className="sidebar">
+          <button
+            className="back-btn"
+            onClick={() => window.history.back()}
+            title="Go Back"
+          >
+            <BackButtonIcon />
+          </button>
+          <div className="profile-header">
+            <img
+              src={user.avatar}
+              alt="User Avatar"
+              className="profile-avatar"
+            />
+            <h2 className="profile-name">{user.name}</h2>
+            <p className="profile-email">{user.email}</p>
+          </div>
+
+          <ul className="sidebar-nav">
+            <li>
+              <a
+                href="#profile"
+                className={activeTab === "profile" ? "active" : ""}
+                onClick={(e) => handleTabClick(e, "profile")}
+              >
+                <UserIcon /> <span>My Profile</span>
               </a>
-              <h2 style={{ marginLeft: "1rem" }}>Account Settings</h2>
-            </div>
-            <div className="profile-pic-header">
-              <img src={profilePic} alt="Profile" />
-            </div>
-          </header>
-
-          {/* Sidebar */}
-          <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-            <h2>Settings</h2>
-            <ul>
-              <li className="active">
-                <i className="fas fa-user"></i>
-                <span>Account</span>
-              </li>
-              <li>
-                <i className="fas fa-bell"></i>
-                <span>Notifications</span>
-              </li>
-              <li>
-                <i className="fas fa-lock"></i>
-                <span>Privacy</span>
-              </li>
-              <li>
-                <i className="fas fa-globe"></i>
-                <span>Languages</span>
-              </li>
-              <li>
-                <i className="fas fa-question-circle"></i>
-                <span>Help</span>
-              </li>
-            </ul>
-          </aside>
-
-          {/* Main content area */}
-          <main className="main-content">
-            {/* Header for desktop */}
-            <header className="desktop-header">
-              <div className="header-title">
-                <a href="/" className="back-arrow">
-                  <i className="fas fa-arrow-left"></i>
-                </a>
-                <h1>Account Settings</h1>
-              </div>
-              <div className="profile-pic-header">
-                <img src={profilePic} alt="Profile" />
-              </div>
-            </header>
-
-            {/* Account Content */}
-            <div id="account-content" className="content-section">
-              <div>
-                <div className="section-header">
-                  <h2 className="section-title">Basic info</h2>
-                  {editMode.basicInfo ? (
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button
-                        onClick={() => toggleEditMode("basicInfo", true)}
-                        className="save-button"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => toggleEditMode("basicInfo", false)}
-                        className="cancel-button"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => toggleEditMode("basicInfo")}
-                      className="edit-button"
-                    >
-                      Edit
-                    </button>
-                  )}
-                </div>
-                <div className="profile-upload-section">
-                  <div
-                    className="profile-pic-container"
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    <img src={profilePic} alt="Profile" />
-                    <div className="upload-icon">
-                      <i className="fas fa-upload"></i>
-                    </div>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleProfilePicChange}
-                      style={{ display: "none" }}
-                      accept="image/*"
-                    />
-                  </div>
-                  <div className="upload-text">
-                    <p>upload new picture</p>
-                    <p>minimum 800x800</p>
-                  </div>
-                </div>
-                <div>
-                  <InfoRow
-                    label="Name"
-                    name="name"
-                    value={tempUserData.name}
-                    isEditing={editMode.basicInfo}
-                    onChange={handleInputChange}
-                  />
-                  <InfoRow
-                    label="Date of Birth"
-                    name="dob"
-                    value={tempUserData.dob}
-                    isEditing={editMode.basicInfo}
-                    onChange={handleInputChange}
-                  />
-                  <InfoRow
-                    label="Gender"
-                    name="gender"
-                    value={tempUserData.gender}
-                    isEditing={editMode.basicInfo}
-                    onChange={handleInputChange}
-                  />
-                  <InfoRow
-                    label="Email"
-                    name="email"
-                    value={tempUserData.email}
-                    isEditing={editMode.basicInfo}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div style={{ marginTop: "2rem" }}>
-                <div className="section-header">
-                  <h2 className="section-title">Account info</h2>
-                  {editMode.accountInfo ? (
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button
-                        onClick={() => toggleEditMode("accountInfo", true)}
-                        className="save-button"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => toggleEditMode("accountInfo", false)}
-                        className="cancel-button"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => toggleEditMode("accountInfo")}
-                      className="edit-button"
-                    >
-                      Edit
-                    </button>
-                  )}
-                </div>
-                <InfoRow
-                  label="Username"
-                  name="username"
-                  value={tempUserData.username}
-                  isEditing={editMode.accountInfo}
-                  onChange={handleInputChange}
-                />
-                <InfoRow
-                  label="Password"
-                  name="password"
-                  value={tempUserData.password}
-                  isEditing={editMode.accountInfo}
-                  onChange={handleInputChange}
-                />
-                <div style={{ paddingTop: "1rem" }}>
-                  <button className="delete-account-btn">Delete Account</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Notifications Content */}
-            <div id="notifications-content" className="content-section hidden">
-              <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>
-                Notifications
-              </h2>
-              <div className="settings-card">
-                <div>
-                  <p>Email Notifications</p>
-                  <p>Get emails about your activity.</p>
-                </div>
-                <div className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="toggle"
-                    id="email-toggle"
-                    checked={notifications.email}
-                    onChange={() =>
-                      setNotifications((p) => ({ ...p, email: !p.email }))
-                    }
-                    className="toggle-checkbox"
-                  />
-                  <label
-                    htmlFor="email-toggle"
-                    className="toggle-label"
-                  ></label>
-                </div>
-              </div>
-            </div>
-
-            {/* Privacy Content */}
-            <div id="privacy-content" className="content-section hidden">
-              <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>
-                Privacy
-              </h2>
-              <div className="settings-card">
-                <div>
-                  <p>Profile Visibility</p>
-                  <p>Allow others to see your profile.</p>
-                </div>
-                <div className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    name="toggle"
-                    id="privacy-toggle"
-                    checked={privacy.profilePublic}
-                    onChange={() =>
-                      setPrivacy((p) => ({
-                        ...p,
-                        profilePublic: !p.profilePublic,
-                      }))
-                    }
-                    className="toggle-checkbox"
-                  />
-                  <label
-                    htmlFor="privacy-toggle"
-                    className="toggle-label"
-                  ></label>
-                </div>
-              </div>
-            </div>
-
-            {/* Languages Content */}
-            <div id="languages-content" className="content-section hidden">
-              <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>
-                Languages
-              </h2>
-              <div
-                className="settings-card"
-                style={{ flexDirection: "column", alignItems: "flex-start" }}
+            </li>
+            <li>
+              <a
+                href="#orders"
+                className={activeTab === "orders" ? "active" : ""}
+                onClick={(e) => handleTabClick(e, "orders")}
               >
-                <label
-                  htmlFor="language-select"
-                  style={{ marginBottom: "0.5rem" }}
-                >
-                  Select Language
-                </label>
-                <select
-                  id="language-select"
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="language-select"
-                >
-                  <option value="english">English</option>
-                  <option value="spanish">Spanish</option>
-                  <option value="french">French</option>
-                  <option value="german">German</option>
-                </select>
-              </div>
-            </div>
+                <OrdersIcon /> <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#billing"
+                className={activeTab === "billing" ? "active" : ""}
+                onClick={(e) => handleTabClick(e, "billing")}
+              >
+                <BillingIcon /> <span>Billing</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#settings"
+                className={activeTab === "settings" ? "active" : ""}
+                onClick={(e) => handleTabClick(e, "settings")}
+              >
+                <SettingsIcon /> <span>Settings</span>
+              </a>
+            </li>
+          </ul>
 
-            {/* Help Content */}
-            <div id="help-content" className="content-section hidden">
-              <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>
-                Help & Support
-              </h2>
-              <div
-                className="settings-card"
-                style={{ flexDirection: "column", alignItems: "flex-start" }}
-              >
-                <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
-                  Frequently Asked Questions
-                </p>
-                <ul className="help-list">
-                  <li>
-                    <a href="#">How to change my password?</a>
-                  </li>
-                  <li>
-                    <a href="#">How to update my email?</a>
-                  </li>
-                  <li>
-                    <a href="#">Where can I find my billing history?</a>
-                  </li>
-                </ul>
-              </div>
-              <div
-                className="settings-card"
-                style={{
-                  marginTop: "1rem",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                }}
-              >
-                <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
-                  Contact Us
-                </p>
-                <p>
-                  If you need further assistance, please don't hesitate to reach
-                  out to our support team at{" "}
-                  <a href="mailto:support@example.com" className="contact-link">
-                    support@example.com
-                  </a>
-                  .
-                </p>
-              </div>
-            </div>
-          </main>
-        </div>
+          <button className="logout-btn">
+            <LogoutIcon /> Logout
+          </button>
+        </aside>
+
+        <main className="main-content" ref={contentRef}>
+          {renderContent()}
+        </main>
       </div>
     </>
   );
 };
 
-export default Home;
+// --- CONTENT SECTIONS AS SEPARATE COMPONENTS ---
+
+const ProfileSection = () => (
+  <div className="content-section">
+    <div className="content-header">
+      <h1>My Profile</h1>
+      <p>Manage your personal information and contact details.</p>
+    </div>
+    <form>
+      <div className="form-group">
+        <label htmlFor="fullName">Full Name</label>
+        <input type="text" id="fullName" defaultValue="Alexender Smith" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="email">Email Address</label>
+        <input type="email" id="email" defaultValue="alex.smith@business.com" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="phone">Phone Number</label>
+        <input type="tel" id="phone" defaultValue="+1 234 567 890" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="company">Company</label>
+        <input
+          type="text"
+          id="company"
+          defaultValue="Creative Solutions Inc."
+        />
+      </div>
+      <button
+        type="submit"
+        className="action-button"
+        onMouseEnter={(e) =>
+          window.anime &&
+          window.anime({ targets: e.currentTarget, translateY: -3 })
+        }
+        onMouseLeave={(e) =>
+          window.anime &&
+          window.anime({ targets: e.currentTarget, translateY: 0 })
+        }
+      >
+        Save Changes
+      </button>
+    </form>
+  </div>
+);
+
+const OrdersSection = () => {
+  // Mock data for orders
+  const orders = [
+    {
+      id: "#12345",
+      date: "Aug 15, 2025",
+      total: "$150.00",
+      status: "Delivered",
+    },
+    { id: "#12346", date: "Sep 01, 2025", total: "$85.50", status: "Pending" },
+    {
+      id: "#12347",
+      date: "Jul 22, 2025",
+      total: "$210.00",
+      status: "Delivered",
+    },
+    {
+      id: "#12348",
+      date: "Jun 10, 2025",
+      total: "$50.25",
+      status: "Cancelled",
+    },
+  ];
+  return (
+    <div className="content-section">
+      <div className="content-header">
+        <h1>Order History</h1>
+        <p>Track your past purchases and their status.</p>
+      </div>
+      <table className="order-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => (
+            <tr key={order.id}>
+              <td>{order.id}</td>
+              <td>{order.date}</td>
+              <td>{order.total}</td>
+              <td>
+                <span className={`status ${order.status.toLowerCase()}`}>
+                  {order.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const BillingSection = () => (
+  <div className="content-section">
+    <div className="content-header">
+      <h1>Billing</h1>
+      <p>Manage your payment methods and view invoices.</p>
+    </div>
+    <div className="form-group">
+      <label>Primary Payment Method</label>
+      <input type="text" readOnly defaultValue="Visa ending in •••• 4242" />
+    </div>
+    <button className="action-button">Add New Card</button>
+  </div>
+);
+
+const SettingsSection = () => (
+  <div className="content-section">
+    <div className="content-header">
+      <h1>Settings</h1>
+      <p>Update your password and security preferences.</p>
+    </div>
+    <form>
+      <div className="form-group">
+        <label htmlFor="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="newPassword">New Password</label>
+        <input type="password" id="newPassword" />
+      </div>
+      <button type="submit" className="action-button">
+        Update Password
+      </button>
+    </form>
+  </div>
+);
+
+export default MyAccount;

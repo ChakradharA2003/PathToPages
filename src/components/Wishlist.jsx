@@ -287,7 +287,7 @@ const Wishlist = () => {
     width: 20px;
     height: 20px;
     position: relative;
-    top:-15px;
+    top 25px;
     margin:auto;
     fill: black; /* Makes the icon visible */
 }
