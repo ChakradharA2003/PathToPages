@@ -11,7 +11,6 @@ export default function Layout({ children }) {
           <Link to="/products" className="block p-2 hover:bg-gray-200 rounded">Products</Link>
           <Link to="/orders" className="block p-2 hover:bg-gray-200 rounded">Orders</Link>
           <Link to="/coupons" className="block p-2 hover:bg-gray-200 rounded">Coupons</Link>
-          <Link to="/analytics" className="block p-2 hover:bg-gray-200 rounded">Analytics</Link>
         </nav>
       </aside>
 

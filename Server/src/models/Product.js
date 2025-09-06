@@ -1,31 +1,25 @@
-const mongoose = require('mongoose');
-
-
-const VariantSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    image: String,
-    stock: { type: Number, default: 0 },
-});
-
+const mongoose = require("mongoose");
 
 const ProductSchema = new mongoose.Schema(
-    {
-        name: { type: String, required: true, index: true },
-        description: { type: String },
-        price: { type: Number, required: true },
-        images: [String],
-        type: { type: String, enum: ['scrapbook', 'bookmark'], required: true },
-        variants: [VariantSchema],
-        stock: { type: Number, default: 0 },
-        tags: [String],
-        isActive: { type: Boolean, default: true },
-    },
-    { timestamps: true }
+  {
+    name: { type: String, required: true, index: true },
+    description: { type: String },
+    category: { type: String, enum: ["scrapbook", "bookmark"], required: true },
+    price: { type: Number, required: true }, // base price
+    stock: { type: Number, default: 0 },
+    images: [String], // multiple image URLs
+    purchasedCount: { type: Number, default: 0 }, // how many customers bought this
+  },
+  { timestamps: true }
 );
 
+// Text search optimization
+ProductSchema.index({ name: "text", description: "text" });
 
-ProductSchema.index({ name: 'text', description: 'text', tags: 'text' });
+// 🎯 Virtual field for discounted price (computed dynamically)
+ProductSchema.virtual("finalPrice").get(function () {
+  // Default: return base price
+  return this.price;
+});
 
-
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model("Product", ProductSchema);
