@@ -34,8 +34,9 @@ app.use(morgan('combined', { stream: { write: (s) => logger.info(s.trim()) } }))
 app.use(rateLimit({ windowMs: 60 * 1000, max: 200 }));
 
 // connect db
-connectDB(process.env.MONGO_URI || 'mongodb://localhost:27017/travel_scrapbook');
-const uploadsPath = path.join(__dirname,"..", "uploads");
+connectDB(process.env.MONGO_URI);
+const uploadsPath = path.join(__dirname, "src", "uploads");
+app.use("/uploads", express.static(uploadsPath));
 
 // Verify uploads folder exists
 if (!fs.existsSync(uploadsPath)) {
