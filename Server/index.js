@@ -17,6 +17,8 @@ const connectDB = require('./src/config/db');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.set('trust proxy', 1);
+
 // raw body for webhooks
 app.use(express.json({ verify: rawBodySaver }));
 app.use(express.urlencoded({ extended: true }));
