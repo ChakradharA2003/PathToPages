@@ -1,31 +1,11 @@
 // src/pages/ProductsPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const API_BASE = "http://localhost:4000/api/v1/products"; // adjust for your backend
+
 const ProductsPage = () => {
-  const [products, setProducts] = useState([
-    {
-      id: "P001",
-      name: "Travel Scrapbook",
-      description: "A memory-keeper for your travels.",
-      category: "scrapbook",
-      price: 499,
-      stock: 100,
-      images: [
-        "https://via.placeholder.com/150/0000FF",
-        "https://via.placeholder.com/150/FF0000",
-      ],
-    },
-    {
-      id: "P002",
-      name: "Bookmark A",
-      description: "Simple bookmark design.",
-      category: "bookmark",
-      price: 99,
-      stock: 50,
-      images: ["https://via.placeholder.com/150"],
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -37,7 +17,9 @@ const ProductsPage = () => {
     category: "scrapbook",
     price: "",
     stock: "",
-    images: "",
+    images: [], // This will contain both existing images (URLs) and new previews
+    files: [], // This will only contain new files to upload
+    existingImages: [], // This will contain existing image URLs from the database
   });
 
   // Filters
@@ -56,6 +38,44 @@ const ProductsPage = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
+  // -------------------------------
+  // Backend Integration
+  // -------------------------------
+  const fetchProducts = async () => {
+    try {
+      const query = new URLSearchParams();
+      if (search) query.append("q", search);
+      if (categoryFilter !== "all") query.append("category", categoryFilter);
+      if (priceRange) query.append("maxPrice", priceRange);
+      if (stockRange) query.append("maxStock", stockRange);
+
+      const res = await fetch(`${API_BASE}?${query.toString()}`);
+      const data = await res.json();
+      if (data.success) {
+        setProducts(data.data.products);
+      } else {
+        console.error("❌ API Error:", data.error || "Failed to fetch products");
+        alert("Failed to fetch products: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("❌ Error fetching products:", err);
+      alert("Network error: " + err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [search, categoryFilter, priceRange, stockRange]);
+
+  // Helper function to get full image URL
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Already a full URL
+    }
+    return `http://localhost:4000${imagePath}`; // Add server base URL
+  };
+
   // Reset form
   const resetForm = () => {
     setForm({
@@ -64,38 +84,61 @@ const ProductsPage = () => {
       category: "scrapbook",
       price: "",
       stock: "",
-      images: "",
+      images: [],
+      files: [],
+      existingImages: [],
     });
     setIsEdit(false);
     setEditId(null);
   };
 
-  // Handle submit (add or edit)
-  const handleSubmit = (e) => {
+  // Submit (add or edit)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formattedProduct = {
-      id: isEdit ? editId : `P${Math.floor(Math.random() * 1000)}`,
-      name: form.name,
-      description: form.description,
-      category: form.category,
-      price: Number(form.price),
-      stock: Number(form.stock),
-      images: form.images.split(",").map((i) => i.trim()),
-    };
 
-    if (isEdit) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === editId ? formattedProduct : p))
-      );
-    } else {
-      setProducts([...products, formattedProduct]);
+    try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("category", form.category);
+      formData.append("price", Number(form.price));
+      formData.append("stock", Number(form.stock));
+
+      // For edit mode, include existing images
+      if (isEdit && form.existingImages.length > 0) {
+        formData.append("existingImages", JSON.stringify(form.existingImages));
+      }
+
+      // append uploaded files
+      form.files.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const url = isEdit ? `${API_BASE}/${editId}` : API_BASE;
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        fetchProducts();
+        alert(isEdit ? "Product updated successfully!" : "Product created successfully!");
+        resetForm();
+        setShowModal(false);
+      } else {
+        console.error("❌ API Error:", data.error || "Failed to save product");
+        alert("Failed to save product: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("❌ Error saving product:", err);
+      alert("Network error: " + err.message);
     }
-
-    resetForm();
-    setShowModal(false);
   };
 
-  // Edit product
+  // Edit
   const handleEdit = (product) => {
     setForm({
       name: product.name,
@@ -103,60 +146,72 @@ const ProductsPage = () => {
       category: product.category,
       price: product.price,
       stock: product.stock,
-      images: product.images.join(", "),
+      images: product.images || [], // Existing images from database
+      files: [], // New files to upload
+      existingImages: product.images || [], // Keep track of existing images
     });
-    setEditId(product.id);
+    setEditId(product._id);
     setIsEdit(true);
     setShowModal(true);
   };
 
-  // Confirm delete (opens modal)
+  // Delete
   const confirmDelete = (id) => {
     setDeleteId(id);
     setDeleteModal(true);
   };
 
-  // Actually delete
-  const handleDelete = () => {
-    setProducts(products.filter((p) => p.id !== deleteId));
-    setDeleteId(null);
-    setDeleteModal(false);
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/${deleteId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchProducts();
+        alert("Product deleted successfully!");
+        setDeleteId(null);
+        setDeleteModal(false);
+      } else {
+        console.error("❌ API Error:", data.error || "Failed to delete product");
+        alert("Failed to delete product: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("❌ Error deleting product:", err);
+      alert("Network error: " + err.message);
+    }
   };
 
-  // Open image modal
-  const openImageModal = (images) => {
+  // Remove image locally (before submit)
+  const removeImage = (index, isExisting = false) => {
+    if (isExisting) {
+      // Remove from existing images
+      const updatedExistingImages = [...form.existingImages];
+      updatedExistingImages.splice(index, 1);
+      setForm({ 
+        ...form, 
+        existingImages: updatedExistingImages,
+        images: [...updatedExistingImages, ...form.images.filter((_, i) => i >= form.existingImages.length)]
+      });
+    } else {
+      // Remove from new images
+      const newImageIndex = index - form.existingImages.length;
+      const updatedImages = [...form.images];
+      updatedImages.splice(index, 1);
+
+      const updatedFiles = [...form.files];
+      updatedFiles.splice(newImageIndex, 1);
+
+      setForm({ ...form, images: updatedImages, files: updatedFiles });
+    }
+  };
+
+  // Open image modal at a specific index
+  const openImageModal = (images, startIndex = 0) => {
     setSelectedImages(images);
-    setCurrentImageIndex(0);
+    setCurrentImageIndex(startIndex);
     setShowImageModal(true);
   };
-
-  // Apply filters
-  const filteredProducts = products.filter((p) => {
-    const matchesSearch = p.name
-      .toLowerCase()
-      .includes(search.toLowerCase().trim());
-
-    const matchesCategory =
-      categoryFilter === "all" ? true : p.category === categoryFilter;
-
-    const matchesStock =
-      stockFilter === "all"
-        ? true
-        : stockFilter === "in"
-        ? p.stock > 0
-        : p.stock === 0;
-
-    const matchesPrice = p.price <= priceRange;
-    const matchesStockRange = p.stock <= stockRange;
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesStock &&
-      matchesPrice &&
-      matchesStockRange
-    );
-  });
 
   return (
     <div className="p-6">
@@ -217,7 +272,7 @@ const ProductsPage = () => {
         </div>
       </div>
 
-      {/* Add Product Button */}
+      {/* Add Product */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -230,9 +285,9 @@ const ProductsPage = () => {
         + Add Product
       </motion.button>
 
-      {/* Products Table / Empty State */}
+      {/* Products Table */}
       <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-        {filteredProducts.length > 0 ? (
+        {products.length > 0 ? (
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100 text-left">
@@ -245,9 +300,9 @@ const ProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((prod) => (
+              {products.map((prod) => (
                 <motion.tr
-                  key={prod.id}
+                  key={prod._id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -264,15 +319,36 @@ const ProductsPage = () => {
                     {prod.stock}
                   </td>
                   <td className="p-3">
-                    {prod.images.length > 0 ? (
-                      <img
-                        src={prod.images[0]}
-                        alt={prod.name}
-                        className="w-12 h-12 rounded object-cover cursor-pointer"
-                        onClick={() => openImageModal(prod.images)}
-                      />
+                    {prod.images?.length > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          {prod.images.slice(0, 3).map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={getImageUrl(img)}
+                              alt={prod.name}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm cursor-pointer hover:scale-110 transition-transform"
+                              onClick={() => openImageModal(prod.images.map(getImageUrl), idx)}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {prod.images.length > 3 && (
+                          <span 
+                            className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                            onClick={() => openImageModal(prod.images.map(getImageUrl), 0)}
+                          >
+                            +{prod.images.length - 3} more
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-500">
+                          ({prod.images.length} {prod.images.length === 1 ? 'image' : 'images'})
+                        </span>
+                      </div>
                     ) : (
-                      "No Image"
+                      <span className="text-gray-400 text-sm">No Images</span>
                     )}
                   </td>
                   <td className="p-3">
@@ -283,7 +359,7 @@ const ProductsPage = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => confirmDelete(prod.id)}
+                      onClick={() => confirmDelete(prod._id)}
                       className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md"
                     >
                       Delete
@@ -300,20 +376,6 @@ const ProductsPage = () => {
             className="flex flex-col items-center justify-center py-20"
           >
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-6 rounded-2xl shadow-lg text-center max-w-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-14 w-14 mx-auto mb-4 text-white/90"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 13h6m-3-3v6m-9 1.5A2.25 2.25 0 015.25 15H18.75A2.25 2.25 0 0121 17.25v1.5A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18.75v-1.5z"
-                />
-              </svg>
               <h3 className="text-xl font-semibold mb-2">No Products Found</h3>
               <p className="text-white/90">
                 Try adjusting your filters or add a new product to get started.
@@ -323,48 +385,7 @@ const ProductsPage = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl p-6 shadow-lg max-w-sm w-full text-center"
-            >
-              <h3 className="text-lg font-semibold mb-3 text-gray-800">
-                Confirm Delete
-              </h3>
-              <p className="text-gray-600 mb-5">
-                Are you sure you want to delete this product? This action cannot
-                be undone.
-              </p>
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={() => setDeleteModal(false)}
-                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 shadow"
-                >
-                  Delete
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Add/Edit Product Modal */}
+      {/* Add/Edit Modal */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -378,7 +399,7 @@ const ProductsPage = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-white w-full max-w-2xl rounded-lg shadow-lg p-6 overflow-y-auto max-h-[90vh]"
+              className="bg-white w-full max-w-4xl rounded-lg shadow-lg p-6 overflow-y-auto max-h-[90vh]"
             >
               <h3 className="text-xl font-semibold mb-4">
                 {isEdit ? "Edit Product" : "Add New Product"}
@@ -422,15 +443,113 @@ const ProductsPage = () => {
                     required
                   />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Image URLs (comma separated)"
-                  className="w-full p-2 border rounded"
-                  value={form.images}
-                  onChange={(e) =>
-                    setForm({ ...form, images: e.target.value })
-                  }
-                />
+
+                {/* Image Upload Section */}
+                <div>
+                  <label className="block font-medium mb-2">
+                    {isEdit ? "Product Images" : "Upload Images"}
+                  </label>
+                  
+                  {/* Show existing images if editing */}
+                  {isEdit && form.existingImages.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Current Images:</h4>
+                      <div className="flex gap-2 flex-wrap">
+                        {form.existingImages.map((img, idx) => (
+                          <div
+                            key={`existing-${idx}`}
+                            className="relative w-20 h-20 border rounded overflow-hidden group"
+                          >
+                            <img
+                              src={getImageUrl(img)}
+                              alt="existing"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                              onClick={() => openImageModal(form.existingImages.map(getImageUrl), idx)}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(idx, true)}
+                              className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-bl opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ✕
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center">
+                              Existing
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* File input for new images */}
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="w-full p-2 border rounded mb-2"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files);
+                      const previews = files.map((file) =>
+                        URL.createObjectURL(file)
+                      );
+                      setForm({
+                        ...form,
+                        images: [...form.images, ...previews],
+                        files: [...form.files, ...files],
+                      });
+                    }}
+                  />
+
+                  {/* Show new image previews */}
+                  {form.images.length > form.existingImages.length && (
+                    <div className="mt-3">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">New Images:</h4>
+                      <div className="flex gap-2 flex-wrap">
+                        {form.images.slice(form.existingImages.length).map((img, idx) => (
+                          <div
+                            key={`new-${idx}`}
+                            className="relative w-20 h-20 border rounded overflow-hidden group"
+                          >
+                            <img
+                              src={img}
+                              alt="preview"
+                              className="w-full h-full object-cover"
+                              onClick={() => openImageModal([
+                                ...form.existingImages.map(getImageUrl),
+                                ...form.images.slice(form.existingImages.length)
+                              ], form.existingImages.length + idx)}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(form.existingImages.length + idx)}
+                              className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-bl opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ✕
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-green-600 bg-opacity-75 text-white text-xs p-1 text-center">
+                              New
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Total images count */}
+                  {form.images.length > 0 && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      Total images: {form.images.length} 
+                      {form.existingImages.length > 0 && (
+                        <span> ({form.existingImages.length} existing, {form.images.length - form.existingImages.length} new)</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <select
                   className="w-full p-2 border rounded"
                   value={form.category}
@@ -475,7 +594,7 @@ const ProductsPage = () => {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="bg-white rounded-lg shadow-lg p-4 relative max-w-2xl w-full"
+              className="bg-white rounded-lg shadow-lg p-4 relative max-w-4xl w-full"
             >
               <img
                 src={selectedImages[currentImageIndex]}
@@ -488,7 +607,7 @@ const ProductsPage = () => {
               >
                 X
               </button>
-              <div className="flex justify-between mt-4">
+              <div className="flex justify-between items-center mt-4">
                 <button
                   disabled={currentImageIndex === 0}
                   className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
@@ -496,12 +615,56 @@ const ProductsPage = () => {
                 >
                   Prev
                 </button>
+                <span className="text-sm text-gray-600">
+                  {currentImageIndex + 1} of {selectedImages.length}
+                </span>
                 <button
                   disabled={currentImageIndex === selectedImages.length - 1}
                   className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
                   onClick={() => setCurrentImageIndex((i) => i + 1)}
                 >
                   Next
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation */}
+      <AnimatePresence>
+        {deleteModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-xl p-6 shadow-lg max-w-sm w-full text-center"
+            >
+              <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                Confirm Delete
+              </h3>
+              <p className="text-gray-600 mb-5">
+                Are you sure you want to delete this product? This action cannot
+                be undone.
+              </p>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={() => setDeleteModal(false)}
+                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 shadow"
+                >
+                  Delete
                 </button>
               </div>
             </motion.div>
