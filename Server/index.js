@@ -11,8 +11,8 @@ const rawBodySaver = (req, res, buf, encoding) => {
     if (buf && buf.length) req.rawBody = buf.toString(encoding || 'utf8');
 };
 
-const logger = require('./config/logger');
-const connectDB = require('./config/db');
+const logger = require('./src/config/logger');
+const connectDB = require('./src/config/db');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -65,17 +65,17 @@ app.get("/uploads/:filename", (req, res) => {
 
 // Other routes
 app.get('/', (req, res) => res.send('Travel Scrapbook API'));
-app.use('/api/v1/auth', require('./routes/auth'));
-app.use('/api/v1/products', require('./routes/products'));
-app.use('/api/v1/cart', require('./routes/cart'));
-app.use('/api/v1/orders', require('./routes/orders'));
-app.use('/api/v1/admin', require('./routes/admin'));
+app.use('/api/v1/auth', require('./src/routes/auth'));
+app.use('/api/v1/products', require('./src/routes/products'));
+app.use('/api/v1/cart', require('./src/routes/cart'));
+app.use('/api/v1/orders', require('./src/routes/orders'));
+app.use('/api/v1/admin', require('./src/routes/admin'));
 
 // razorpay webhook (raw)
-app.post('/api/v1/webhook/razorpay', express.json({ verify: rawBodySaver }), require('./controllers/orderController').webhook);
+app.post('/api/v1/webhook/razorpay', express.json({ verify: rawBodySaver }), require('./src/controllers/orderController').webhook);
 
 // error handler
-app.use(require('./middleware/errorHandler'));
+app.use(require('./src/middleware/errorHandler'));
 
 app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
 
