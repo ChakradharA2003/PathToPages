@@ -169,51 +169,53 @@ const Home = () => {
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
     
     /* --- Theme Variables --- */
-    body[data-theme='light'] {
-      --bg-color: #fdf8f0; /* Parchment */
-      --text-color: #5c544b; /* Dark Taupe */
-      --nav-scroll-bg: rgba(253, 248, 240, 0.8);
-      --card-bg: #fff;
-      --card-shadow: rgba(0,0,0,0.05);
-      --card-hover-shadow: rgba(0,0,0,0.1);
-      --footer-bg: #3d405b;
-      --footer-text: #fdf8f0;
-      --accent-color-1: #c97b63; /* Muted Terracotta */
-      --accent-color-2: #b99a6b; /* Muted Gold */
-      --hero-text-color: #fff;
-      --hero-overlay-bg: rgba(40, 30, 20, 0.6);
-      --nav-link-color: #fff;
-      --nav-scrolled-text: #5c544b;
-      --hamburger-line-color: #fff;
-      --hamburger-scrolled-line-color: #5c544b;
-      --mobile-menu-bg: rgba(253, 248, 240, 0.95);
-      --mobile-menu-text: #5c544b;
-      --social-btn-before-bg: #fff;
-      --social-icon-color: #3d405b;
-    }
+ body[data-theme='light'] {
+  --bg-color: #faf7f2; /* soft parchment */
+  --text-color: #2c2c2c; /* deep gray */
+  --nav-scroll-bg: rgba(250, 247, 242, 0.9);
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.05);
+  --card-hover-shadow: rgba(0, 0, 0, 0.1);
+  --footer-bg: #2c2c2c;
+  --footer-text: #f4f4f4;
+  --accent-color-1: #b35c2e; /* soft terracotta */
+  --accent-color-2: #d4b483; /* classic muted gold */
+  --hero-text-color: #1a1a1a;
+  --hero-overlay-bg: rgba(0, 0, 0, 0.3);
+  --nav-link-color: #1a1a1a;
+  --nav-scrolled-text: #2c2c2c;
+  --hamburger-line-color: #2c2c2c;
+  --hamburger-scrolled-line-color: #2c2c2c;
+  --mobile-menu-bg: rgba(255, 255, 255, 0.95);
+  --mobile-menu-text: #1a1a1a;
+  --social-btn-before-bg: #ffffff;
+  --social-icon-color: #2c2c2c;
+}
 
-    body[data-theme='dark'] {
-      --bg-color: #1a1b2a;
-      --text-color: #fdf8f0;
-      --nav-scroll-bg: rgba(20, 20, 40, 0.8);
-      --card-bg: #2c2e43;
-      --card-shadow: rgba(0,0,0,0.2);
-      --card-hover-shadow: rgba(0,0,0,0.3);
-      --footer-bg: #12131f;
-      --footer-text: #fdf8f0;
-      --accent-color-1: #e07a5f;
-      --accent-color-2: #b99a6b;
-      --hero-text-color: #fff;
-      --hero-overlay-bg: rgba(20, 15, 10, 0.7);
-      --nav-link-color: #fdf8f0;
-      --nav-scrolled-text: #fdf8f0;
-      --hamburger-line-color: #fdf8f0;
-      --hamburger-scrolled-line-color: #fdf8f0;
-      --mobile-menu-bg: rgba(28, 29, 46, 0.95);
-      --mobile-menu-text: #fdf8f0;
-      --social-btn-before-bg: #212121;
-      --social-icon-color: #fdf8f0;
-    }
+
+body[data-theme='dark'] {
+  --bg-color: #121212; /* near-black for depth */
+  --text-color: #eaeaea; /* soft white */
+  --nav-scroll-bg: rgba(18, 18, 18, 0.9);
+  --card-bg: #1e1e1e;
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --card-hover-shadow: rgba(0, 0, 0, 0.6);
+  --footer-bg: #0f0f0f;
+  --footer-text: #eaeaea;
+  --accent-color-1: #e67e22; /* warm amber */
+  --accent-color-2: #cfa86a; /* antique gold */
+  --hero-text-color: #ffffff;
+  --hero-overlay-bg: rgba(0, 0, 0, 0.5);
+  --nav-link-color: #eaeaea;
+  --nav-scrolled-text: #eaeaea;
+  --hamburger-line-color: #eaeaea;
+  --hamburger-scrolled-line-color: #eaeaea;
+  --mobile-menu-bg: rgba(24, 24, 24, 0.95);
+  --mobile-menu-text: #eaeaea;
+  --social-btn-before-bg: #1a1a1a;
+  --social-icon-color: #eaeaea;
+}
+
     /* --- End Theme Variables --- */
 
     html, body {
@@ -1178,7 +1180,7 @@ const Home = () => {
             className="hero-background"
             src="https://videos.pexels.com/video-files/6074191/6074191-uhd_2732_1440_25fps.mp4"
           ></video>
-          <h1 className="hero-title">PathToPage</h1>
+          <h1 className="hero-title">PathToPages</h1>
           <p>
             From snapshots to stories—keep your travel memories alive in a
             journal made for your adventures.
@@ -1336,18 +1338,20 @@ const Home = () => {
             <div className="footer-section footer-contact">
               <h3>Contact Us</h3>
               <p>Email: Pathtopages@gmail.com</p>
-              <p>Phone: +91 (555) 123-4567</p>
-              <p>Address: Karimnagar, Telangana, India, 505001</p>
-              <div className="social-links">
+              <p>Phone: +91 8019418800</p>
+              <p>Address: Telangana, India </p>
+              <div className="social-links flex space-x-4">
                 {/* Instagram Button */}
                 <a
-                  href="https://www.instagram.com/yourusername" // Replace with your Instagram URL
+                  href="https://www.instagram.com/pathtopages"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="instagram-button"
                   aria-label="Instagram"
                 >
-                  <button className="button-content" aria-label="Instagram">
+                  <button
+                    className="button-content hover:text-pink-500 transition-transform transform hover:scale-110"
+                    aria-label="Instagram"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -1360,16 +1364,51 @@ const Home = () => {
                   </button>
                 </a>
 
-                {/* Twitter Button */}
-                <button className="button" aria-label="Twitter">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
+                {/* Threads Button */}
+                <a
+                  href="https://www.threads.net/@pathtopages"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Threads"
+                >
+                  <button
+                    className="button-content hover:text-black transition-transform transform hover:scale-110"
+                    aria-label="Threads"
                   >
-                    <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 512 512"
+                      width="40"
+                      height="40"
+                    >
+                      <path d="M256 32C132.3 32 32 132.3 32 256s100.3 224 224 224 224-100.3 224-224S379.7 32 256 32zm63.2 319.7c-22.4 0-39.8-10.8-52.7-33.3-9.8 20.2-27.4 33.3-50.8 33.3-34.8 0-60.3-28.1-60.3-66.4 0-40.1 27.3-67.8 69.1-67.8 6.1 0 11.9.6 17.2 1.7 9.4-25.7 26.7-41.2 50.8-41.2 22.6 0 39.6 12.8 50 37.2 8.9 20.4 12.6 46.5 12.6 75.6 0 27.9-4.1 52.3-12.2 71.7-10.3 24.3-27.2 37.2-48.7 37.2zm-61.2-101.8c-7.4-1.6-15.4-2.4-24-2.4-22.9 0-37.2 13.3-37.2 35.2 0 19.9 11.7 33.5 28.8 33.5 19.2 0 32.7-15.7 32.7-39.9v-26.4c0-.1-.1-.1-.3 0z" />
+                    </svg>
+                  </button>
+                </a>
+
+                {/* WhatsApp Button */}
+                <a
+                  href="https://wa.me/918019418800" // replace with your WhatsApp number
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp"
+                >
+                  <button
+                    className="button-content hover:text-green-500 transition-transform transform hover:scale-110"
+                    aria-label="WhatsApp"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 448 512"
+                      width="40"
+                      height="40"
+                    >
+                      <path d="M380.9 97.1C339 55.1 283.2 32 224.3 32 106.8 32 10 128.8 10 246.3c0 43.4 11.5 85.7 33.4 122.9L0 480l115.8-42.9c35.3 19.3 74.7 29.5 114.5 29.5h.1c117.5 0 214.3-96.8 214.3-214.3 0-58.8-23.1-114.6-63.8-155.2zM224.4 426.3h-.1c-35.4 0-70.2-9.5-100.5-27.5l-7.2-4.3-68.7 25.5 25.8-66.9-4.7-7.4C53.8 319.5 44.4 283.8 44.4 246.4c0-99.3 80.8-180.1 180.1-180.1 48.1 0 93.3 18.7 127.3 52.7 34 34 52.7 79.2 52.7 127.3 0 99.3-80.8 180-180.1 180zM308.2 301c-5.1-2.6-30.2-14.9-34.9-16.6-4.7-1.7-8.1-2.6-11.6 2.6-3.4 5.1-13.3 16.6-16.3 20-3 3.4-6 3.9-11.1 1.3-5.1-2.6-21.5-7.9-41-25.2-15.2-13.5-25.5-30.2-28.5-35.3-3-5.1-.3-7.8 2.3-10.4 2.3-2.3 5.1-6 7.6-9s3.4-5.1 5.1-8.6c1.7-3.4.9-6.4-.4-9-1.3-2.6-11.6-27.9-15.9-38.2-4.2-10.1-8.5-8.7-11.6-8.9-3-.2-6.4-.2-9.8-.2s-9 1.3-13.8 6.4c-4.7 5.1-18.1 17.7-18.1 43.1s18.5 50 21 53.4c2.6 3.4 36.4 55.7 88.3 78.1 12.3 5.3 21.9 8.4 29.3 10.7 12.3 3.9 23.5 3.4 32.4 2.1 9.9-1.5 30.2-12.3 34.5-24.2 4.3-11.9 4.3-22.1 3-24.2-1.3-2.1-4.7-3.4-9.8-6z" />
+                    </svg>
+                  </button>
+                </a>
               </div>
             </div>
             <div className="footer-section footer-newsletter">
