@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const API_BASE = "http://localhost:4000/api/v1/products"; // adjust for your backend
+const API_BASE = "https://pathtopages.onrender.com/api/v1/products"; // adjust for your backend
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -73,7 +73,7 @@ const ProductsPage = () => {
     if (imagePath.startsWith('http')) {
       return imagePath; // Already a full URL
     }
-    return `http://localhost:4000${imagePath}`; // Add server base URL
+    return `https://pathtopages.onrender.com${imagePath}`; // Add server base URL
   };
 
   // Reset form

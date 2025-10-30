@@ -70,12 +70,11 @@ app.get("/uploads/:filename", (req, res) => {
 app.get('/', (req, res) => res.send('Travel Scrapbook API'));
 app.use('/api/v1/auth', require('./src/routes/auth'));
 app.use('/api/v1/products', require('./src/routes/products'));
-app.use('/api/v1/cart', require('./src/routes/cart'));
-app.use('/api/v1/orders', require('./src/routes/orders'));
+// app.use('/api/v1/orders', require('./src/routes/orders'));
 app.use('/api/v1/admin', require('./src/routes/admin'));
 
 // razorpay webhook (raw)
-app.post('/api/v1/webhook/razorpay', express.json({ verify: rawBodySaver }), require('./src/controllers/orderController').webhook);
+// app.post('/api/v1/webhook/razorpay', express.json({ verify: rawBodySaver }), require('./src/controllers/orderController').webhook);
 
 // error handler
 app.use(require('./src/middleware/errorHandler'));
