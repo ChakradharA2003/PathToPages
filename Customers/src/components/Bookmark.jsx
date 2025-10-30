@@ -1,51 +1,48 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// The main component for displaying the bookmark product grid.
 const BookmarkPage = () => {
   const navigate = useNavigate();
-  // State to hold the list of bookmarks with their details.
+
   const [bookmarks, setBookmarks] = useState([
     {
       id: 101,
-      name: "Pearl Elegance Bookmark",
+      name: "Ribbon Bookmark",
       price: 1200.0,
       description: "Handcrafted with freshwater pearls.",
       image: "https://placehold.co/600x400/EAE0D5/8E7968?text=Pearls",
       quantity: 1,
-    },
-    {
-      id: 102,
-      name: "Jute Weaver Bookmark",
-      price: 750.0,
-      description: "Woven from natural, eco-friendly jute.",
-      image: "https://placehold.co/600x400/D4BBAA/FFFFFF?text=Jute",
-      quantity: 1,
-    },
-    {
-      id: 103,
-      name: "Tassel Charm Bookmark",
-      price: 950.0,
-      description: "Features a soft, handmade tassel.",
-      image: "https://placehold.co/600x400/C78C5C/FFFFFF?text=Tassel",
-      quantity: 1,
-    },
-    {
-      id: 104,
-      name: "Satin Ribbon Bookmark",
-      price: 600.0,
-      description: "A classic and smooth satin ribbon marker.",
-      image: "https://placehold.co/600x400/A2B5CD/FFFFFF?text=Ribbon",
-      quantity: 1,
-    },
+    }
+    // ,
+    // {
+    //   id: 102,
+    //   name: "Jute Weaver Bookmark",
+    //   price: 750.0,
+    //   description: "Woven from natural, eco-friendly jute.",
+    //   image: "https://placehold.co/600x400/D4BBAA/FFFFFF?text=Jute",
+    //   quantity: 1,
+    // },
+    // {
+    //   id: 103,
+    //   name: "Tassel Charm Bookmark",
+    //   price: 950.0,
+    //   description: "Features a soft, handmade tassel.",
+    //   image: "https://placehold.co/600x400/C78C5C/FFFFFF?text=Tassel",
+    //   quantity: 1,
+    // },
+    // {
+    //   id: 104,
+    //   name: "Satin Ribbon Bookmark",
+    //   price: 600.0,
+    //   description: "A classic and smooth satin ribbon marker.",
+    //   image: "https://placehold.co/600x400/A2B5CD/FFFFFF?text=Ribbon",
+    //   quantity: 1,
+    // },
   ]);
 
-  // State for the notification message
   const [notification, setNotification] = useState("");
-  // State for the dark mode toggle
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Function to handle quantity changes for a specific bookmark item.
   const handleQuantityChange = (id, amount) => {
     setBookmarks((prev) =>
       prev.map((bm) =>
@@ -56,7 +53,6 @@ const BookmarkPage = () => {
     );
   };
 
-  // Function to handle adding a bookmark to the shopping cart.
   const handleAddToCart = (bookmark) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existing = cart.find((item) => item.id === bookmark.id);
@@ -68,7 +64,6 @@ const BookmarkPage = () => {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-
     setNotification(`${bookmark.name} has been added to your cart!`);
     setTimeout(() => {
       setNotification("");
@@ -76,7 +71,6 @@ const BookmarkPage = () => {
     }, 1500);
   };
 
-  // Save journal to wishlist
   const handleSaveToWishlist = (bookmark) => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     const existing = wishlist.find((item) => item.id === bookmark.id);
@@ -85,497 +79,589 @@ const BookmarkPage = () => {
       wishlist.push(bookmark);
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
     }
-
     navigate("/wishlist");
   };
-  // Toggles the theme between light and dark
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
   return (
-    // The 'className' changes based on the 'isDarkMode' state, which triggers the CSS for dark mode.
     <>
-      <style>
-        {`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
 
-    html { scroll-behavior: smooth; }
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-    .bookmark-page {
-      font-family: 'Poppins', sans-serif;
-      background-color: #fdf8f0;
-      padding: 4rem 2rem;
-      min-height: 100vh;
-      color: #5c544b;
-      transition: background-color 0.4s, color 0.4s;
-      position: relative;
-    }
-    
-    /* Dark Mode Styles */
-    .bookmark-page.dark-mode {
-        background-color: #1a1d24;
-        color: #e0e0e0;
-    }
-    .bookmark-page.dark-mode .bookmark-header h1 {
-        color: #ffffff;
-    }
-    .bookmark-page.dark-mode .bookmark-header p {
-        color: #a0a0a0;
-    }
-    .bookmark-page.dark-mode .bookmark-card {
-        background-color: #2c303a;
-        color: #e0e0e0;
-        border-color: #4a4f5a;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-    .bookmark-page.dark-mode .bookmark-info h3 {
-        color: #ffffff;
-    }
-    .bookmark-page.dark-mode .bookmark-info p {
-        color: #a0a0a0;
-    }
-    .bookmark-page.dark-mode .bookmark-price {
-        color: #d4b38a;
-    }
-    .bookmark-page.dark-mode .quantity-control {
-        border-color: #4a4f5a;
-    }
-    .bookmark-page.dark-mode .quantity-control button {
-        color: #e0e0e0;
-    }
-    .bookmark-page.dark-mode .add-to-cart-btn {
-        background-color: #4a4f5a;
-        border-color: #4a4f5a;
-        color: #ffffff;
-    }
-    .bookmark-page.dark-mode .add-to-cart-btn:hover {
-        background-color: #5a5f6a;
-    }
-    .bookmark-page.dark-mode .styled-wrapper .button:before {
-        border-color: #ffffff;
-    }
-    .bookmark-page.dark-mode .button-elem svg {
-        fill: #ffffff;
-    }
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #3b3a30;
-        color: #fff;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        z-index: 1001;
-        animation: slideIn 0.5s ease forwards;
-    }
+        body {
+          font-family: 'Georgia', serif;
+        }
 
-    @keyframes slideIn {
-        from { transform: translateX(100%); }
-        to { transform: translateX(0); }
-    }
+        /* Light Theme - Home.jsx Colors */
+        .bookmark-page {
+          min-height: 100vh;
+          background: #fdf8f0;
+          color: #5c544b;
+          padding: 40px 20px;
+          transition: background 0.3s ease, color 0.3s ease;
+        }
 
-    .bookmark-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        /* Dark Theme - Home.jsx Colors */
+        .bookmark-page.dark-mode {
+          background: #1a1b2a;
+          color: #fdf8f0;
+        }
 
-    .bookmark-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
+        .bookmark-page.dark-mode .bookmark-card {
+          background: #2c2e43;
+          border-color: rgba(255, 255, 255, 0.12);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
 
-    .bookmark-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      color: #5c544b;
-      margin: 0;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .bookmark-card:hover {
+          border-color: #b99a6b;
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
 
-    .bookmark-header p {
-      font-size: 1.2rem;
-      color: #9a8c82;
-      margin-top: 0.5rem;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .bookmark-name {
+          color: #fdf8f0;
+        }
 
-    .bookmark-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.5rem;
-    }
+        .bookmark-page.dark-mode .bookmark-description {
+          color: rgba(253, 248, 240, 0.8);
+        }
 
-    .bookmark-card {
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      border: 1px solid #e0dccc;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s, color 0.4s;
-    }
+        .bookmark-page.dark-mode .quantity-btn {
+          background: #2c2e43;
+          border-color: #b99a6b;
+          color: #b99a6b;
+        }
 
-    .bookmark-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.08);
-    }
+        .bookmark-page.dark-mode .quantity-btn:hover {
+          background: #b99a6b;
+          color: #1a1b2a;
+        }
 
-    .bookmark-image img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
+        .bookmark-page.dark-mode .add-to-cart-btn {
+          background: #c97b63;
+        }
 
-    .bookmark-info {
-      padding: 1.5rem;
-      text-align: center;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
+        .bookmark-page.dark-mode .add-to-cart-btn:hover {
+          background: #d88c75;
+        }
 
-    .bookmark-info h3 {
-      font-family: 'Playfair Display', serif;
-      margin: 0 0 0.5rem;
-      font-size: 1.4rem;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .wishlist-btn {
+          border-color: #e07a5f;
+          color: #e07a5f;
+        }
 
-    .bookmark-info p {
-      color: #9a8c82;
-      flex-grow: 1;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .wishlist-btn:hover {
+          background: #e07a5f;
+          color: #1a1b2a;
+        }
 
-    .bookmark-price {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #b99a6b;
-      margin: 1rem 0;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .back-btn:before {
+          border-color: #fdf8f0;
+        }
 
-    .controls-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      margin-top: auto;
-      flex-wrap: wrap;
-    }
+        .bookmark-page.dark-mode .back-btn:after {
+          border-color: #b99a6b;
+        }
 
-    .quantity-control {
-      display: flex;
-      align-items: center;
-      border: 1px solid #e0dccc;
-      border-radius: 50px;
-      transition: border-color 0.4s;
-    }
+        .bookmark-page.dark-mode .button-elem svg path {
+          fill: #fdf8f0;
+        }
 
-    .quantity-control button {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      color: #5c544b;
-      transition: color 0.4s;
-    }
+        .bookmark-page.dark-mode .notification {
+          background: #2c2e43;
+          color: #fdf8f0;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
 
-    .add-to-cart-btn {
-      padding: 0.8rem 1.5rem;
-      border: 1px solid #b99a6b;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      background-color: #b99a6b;
-      color: #fff;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
+        /* Container */
+        .bookmark-container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
 
-    .add-to-cart-btn:hover {
-      background-color: #a3875a;
-    }
-    
-    /* --- Back Button Styles --- */
-    .styled-wrapper {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1000;
-    }
-    .styled-wrapper .button {
-      display: block;
-      position: relative;
-      width: 56px;
-      height: 56px;
-      margin: 0;
-      overflow: hidden;
-      outline: none;
-      background-color: transparent;
-      cursor: pointer;
-      border: 0;
-    }
+        /* Header */
+        .bookmark-header {
+          text-align: center;
+          margin-bottom: 40px;
+        }
 
-    .styled-wrapper .button:before {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      inset: 7px;
-      border: 3px solid #5c544b;
-      transition:
-        opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms,
-        transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms,
-        border-color 0.4s;
-    }
+        .bookmark-header h1 {
+          font-family: 'Playfair Display', serif;
+          font-size: 3rem;
+          color: #5c544b;
+          margin-bottom: 10px;
+        }
 
-    .styled-wrapper .button:after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      inset: 7px;
-      border: 4px solid #599a53;
-      transform: scale(1.3);
-      transition:
-        opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
-        transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      opacity: 0;
-    }
+        .bookmark-page.dark-mode .bookmark-header h1 {
+          color: #fdf8f0;
+        }
 
-    .styled-wrapper .button:hover:before,
-    .styled-wrapper .button:focus:before {
-      opacity: 0;
-      transform: scale(0.7);
-    }
+        .bookmark-header p {
+          font-size: 1.1rem;
+          color: #5c544b;
+          opacity: 0.8;
+        }
 
-    .styled-wrapper .button:hover:after,
-    .styled-wrapper .button:focus:after {
-      opacity: 1;
-      transform: scale(1);
-    }
+        .bookmark-page.dark-mode .bookmark-header p {
+          color: #fdf8f0;
+        }
 
-    .styled-wrapper .button-box {
-      display: flex;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+        /* Grid */
+        .bookmarks-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 30px;
+        }
 
-    .styled-wrapper .button-elem {
-      display: block;
-      width: 20px;
-      height: 20px;
-      margin: 18px;
-      transform: rotate(360deg);
-    }
-    
-    .styled-wrapper .button-elem svg {
-        fill: #5c544b;
-        transition: fill 0.4s;
-    }
+        /* Card */
+        .bookmark-card {
+          background: #fff;
+          border: 2px solid rgba(185, 154, 107, 0.2);
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
+        }
 
-    .styled-wrapper .button:hover .button-box,
-    .styled-wrapper .button:focus .button-box {
-      transition: 0.4s;
-      transform: translateX(-56px);
-    }
+        .bookmark-card:hover {
+          transform: translateY(-5px);
+          border-color: #b99a6b;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-    /* --- Theme Toggle Switch Styles --- */
-    .theme-toggle-wrapper {
-        position: absolute;
-        top: 1.5rem;
-        right: 2rem;
-        z-index: 1000;
-    }
-    
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
+        .bookmark-image {
+          width: 100%;
+          height: 250px;
+          object-fit: cover;
+          border-bottom: 2px solid #b99a6b;
+        }
 
-    .switch #theme-toggle-input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+        .bookmark-details {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          flex-grow: 1;
+        }
 
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #2196f3;
-      transition: 0.4s;
-      z-index: 0;
-      overflow: hidden;
-    }
+        .bookmark-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.5rem;
+          color: #5c544b;
+          font-weight: 700;
+        }
 
-    .sun-moon {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: yellow;
-      transition: 0.4s;
-    }
+        .bookmark-description {
+          font-size: 0.95rem;
+          color: #5c544b;
+          opacity: 0.8;
+          line-height: 1.5;
+          flex-grow: 1;
+        }
 
-    #theme-toggle-input:checked + .slider {
-      background-color: black;
-    }
+        .bookmark-price {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #c97b63;
+          margin: 10px 0;
+        }
 
-    #theme-toggle-input:checked + .slider .sun-moon {
-      transform: translateX(26px);
-      background-color: white;
-      animation: rotate-center 0.6s ease-in-out both;
-    }
+        /* Quantity Controls */
+        .quantity-controls {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          justify-content: center;
+          margin: 15px 0;
+        }
 
-    .moon-dot {
-      opacity: 0;
-      transition: 0.4s;
-      fill: gray;
-    }
+        .quantity-btn {
+          width: 36px;
+          height: 36px;
+          border: 2px solid #b99a6b;
+          background: #fff;
+          color: #b99a6b;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        }
 
-    #theme-toggle-input:checked + .slider .sun-moon .moon-dot {
-      opacity: 1;
-    }
+        .quantity-btn:hover {
+          background: #b99a6b;
+          color: #fff;
+          transform: scale(1.1);
+        }
 
-    .slider.round {
-      border-radius: 34px;
-    }
+        .quantity-display {
+          font-size: 1.2rem;
+          font-weight: 600;
+          min-width: 40px;
+          text-align: center;
+          color: #5c544b;
+        }
 
-    .slider.round .sun-moon {
-      border-radius: 50%;
-    }
-    #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
-    #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
-    #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+        .bookmark-page.dark-mode .quantity-display {
+          color: #fdf8f0;
+        }
 
-    .cloud-light, .cloud-dark {
-      position: absolute;
-      animation-name: cloud-move;
-      animation-duration: 6s;
-      animation-iteration-count: infinite;
-    }
-    .cloud-light { fill: #eee; }
-    .cloud-dark { fill: #ccc; animation-delay: 1s; }
+        /* Buttons */
+        .bookmark-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
 
-    #cloud-1 { left: 30px; top: 15px; width: 40px; }
-    #cloud-2 { left: 44px; top: 10px; width: 20px; }
-    #cloud-3 { left: 18px; top: 24px; width: 30px; }
-    #cloud-4 { left: 36px; top: 18px; width: 40px; }
-    #cloud-5 { left: 48px; top: 14px; width: 20px; }
-    #cloud-6 { left: 22px; top: 26px; width: 30px; }
+        .add-to-cart-btn {
+          width: 100%;
+          padding: 12px;
+          background: #c97b63;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: 'Georgia', serif;
+        }
 
-    @keyframes cloud-move {
-      0%, 100% { transform: translateX(0px); }
-      50% { transform: translateX(5px); }
-    }
+        .add-to-cart-btn:hover {
+          background: #d88c75;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(201, 123, 99, 0.4);
+        }
 
-    .stars {
-      transform: translateY(-32px);
-      opacity: 0;
-      transition: 0.4s;
-    }
+        .wishlist-btn {
+          width: 100%;
+          padding: 12px;
+          background: transparent;
+          color: #c97b63;
+          border: 2px solid #c97b63;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: 'Georgia', serif;
+        }
 
-    .star {
-      fill: white;
-      position: absolute;
-      transition: 0.4s;
-      animation-name: star-twinkle;
-      animation-duration: 2s;
-      animation-iteration-count: infinite;
-    }
+        .wishlist-btn:hover {
+          background: #c97b63;
+          color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(201, 123, 99, 0.4);
+        }
 
-    #theme-toggle-input:checked + .slider .stars {
-      transform: translateY(0);
-      opacity: 1;
-    }
+        /* Back Button */
+        .back-button-wrapper {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          z-index: 1000;
+        }
 
-    #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
-    #star-2 { width: 6px; top: 16px; left: 3px; }
-    #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
-    #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+        .back-btn {
+          display: block;
+          position: relative;
+          width: 60px;
+          height: 60px;
+          overflow: hidden;
+          outline: none;
+          background-color: transparent;
+          cursor: pointer;
+          border: 0;
+          transition: transform 0.3s ease;
+        }
 
-    @keyframes star-twinkle {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-    }
-    
-    @keyframes rotate-center {
-      0% { transform: translateX(0) rotate(0); }
-      100% { transform: translateX(26px) rotate(360deg); }
-    }
-    
-    @media (max-width: 600px) {
-        .bookmark-page { padding: 2rem 1rem; }
-        .bookmark-header h1 { font-size: 2.5rem; }
-        .bookmark-header p { font-size: 1rem; }
-        .bookmark-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-        .styled-wrapper { top: 0.5rem; left: 0.5rem; }
-        .theme-toggle-wrapper { top: 1rem; right: 1rem; }
-    }
- `}
-      </style>
+        .back-btn:hover {
+          transform: scale(1.05);
+        }
+
+        .back-btn:before {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          inset: 6px;
+          border: 3px solid #5c544b;
+          transition: opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms,
+            transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms;
+        }
+
+        .back-btn:after {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          inset: 6px;
+          border: 4px solid #b99a6b;
+          transform: scale(1.3);
+          transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+            transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          opacity: 0;
+        }
+
+        .back-btn:hover:before,
+        .back-btn:focus:before {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+
+        .back-btn:hover:after,
+        .back-btn:focus:after {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .button-box {
+          display: flex;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+
+        .button-elem {
+          display: block;
+          width: 24px;
+          height: 24px;
+          margin: 18px 15px 0 18px;
+          transform: rotate(360deg);
+        }
+
+        .button-elem svg path {
+          fill: #5c544b;
+        }
+
+        .back-btn:hover .button-box,
+        .back-btn:focus .button-box {
+          transition: 0.4s;
+          transform: translateX(-57px);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-wrapper {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000;
+        }
+
+        .theme-checkbox {
+          --toggle-size: 12px;
+          appearance: none;
+          width: 6.25em;
+          height: 3.125em;
+          background: linear-gradient(to right, #fdf8f0 50%, #1a1b2a 50%) no-repeat;
+          background-size: 205%;
+          background-position: 0;
+          transition: 0.4s;
+          border-radius: 99em;
+          position: relative;
+          cursor: pointer;
+          font-size: var(--toggle-size);
+          border: 2px solid #b99a6b;
+        }
+
+        .theme-checkbox::before {
+          content: "";
+          width: 2.25em;
+          height: 2.25em;
+          position: absolute;
+          top: 0.438em;
+          left: 0.438em;
+          background: #b99a6b;
+          border-radius: 50%;
+          transition: 0.4s;
+        }
+
+        .theme-checkbox:checked::before {
+          left: calc(100% - 2.25em - 0.438em);
+          background: #e07a5f;
+        }
+
+        .theme-checkbox:checked {
+          background-position: 100%;
+        }
+
+        /* Notification */
+        .notification {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #fff;
+          color: #5c544b;
+          padding: 20px 40px;
+          border-radius: 8px;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          font-size: 1.1rem;
+          font-weight: 600;
+          z-index: 2000;
+          border: 2px solid #b99a6b;
+          animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .bookmark-header h1 {
+            font-size: 2rem;
+          }
+
+          .bookmarks-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .back-button-wrapper,
+          .theme-toggle-wrapper {
+            top: 10px;
+          }
+
+          .back-button-wrapper {
+            left: 10px;
+          }
+
+          .theme-toggle-wrapper {
+            right: 10px;
+          }
+
+          .back-btn {
+            width: 50px;
+            height: 50px;
+          }
+
+          .button-elem {
+            width: 20px;
+            height: 20px;
+            margin: 15px 12px 0 15px;
+          }
+
+          .back-btn:hover .button-box,
+          .back-btn:focus .button-box {
+            transform: translateX(-47px);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .bookmark-page {
+            padding: 20px 10px;
+          }
+
+          .bookmark-header h1 {
+            font-size: 1.8rem;
+          }
+
+          .bookmark-header p {
+            font-size: 1rem;
+          }
+
+          .bookmark-card {
+            margin: 0 10px;
+          }
+        }
+      `}</style>
+
       <div className={`bookmark-page ${isDarkMode ? "dark-mode" : ""}`}>
-        <div className="styled-wrapper">
-          <button className="button" onClick={() => window.history.back()}>
+        {/* Back Button */}
+        <div className="back-button-wrapper">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
             <div className="button-box">
               <span className="button-elem">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                <svg viewBox="0 0 46 40" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"></path>
                 </svg>
               </span>
               <span className="button-elem">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                <svg viewBox="0 0 46 40">
+                  <path d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"></path>
                 </svg>
               </span>
             </div>
           </button>
         </div>
 
-        {notification && <div className="notification">{notification}</div>}
-        <div className="bookmark-container">
-          <header className="bookmark-header">
-            <h1>Handcrafted Bookmarks</h1>
-            <p>Mark your page with a touch of elegance.</p>
-          </header>
+        {/* Theme Toggle */}
+        <div className="theme-toggle-wrapper">
+          <input
+            type="checkbox"
+            className="theme-checkbox"
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            aria-label="Toggle dark mode"
+          />
+        </div>
 
-          <div className="bookmark-grid">
+        <div className="bookmark-container">
+          <div className="bookmark-header">
+            <h1>Vintage Bookmarks</h1>
+            <p>Elegant markers for your favorite pages.</p>
+          </div>
+
+          <div className="bookmarks-grid">
             {bookmarks.map((bm) => (
               <div key={bm.id} className="bookmark-card">
-                <div className="bookmark-image">
-                  <img src={bm.image} alt={bm.name} />
-                </div>
-                <div className="bookmark-info">
-                  <h3>{bm.name}</h3>
-                  <p>{bm.description}</p>
-                  <div className="bookmark-price">₹{bm.price.toFixed(2)}</div>
-                  <div className="controls-container">
-                    <div className="quantity-control">
-                      <button onClick={() => handleQuantityChange(bm.id, -1)}>
-                        −
-                      </button>
-                      <span>{bm.quantity}</span>
-                      <button onClick={() => handleQuantityChange(bm.id, 1)}>
-                        +
-                      </button>
-                    </div>
+                <img src={bm.image} alt={bm.name} className="bookmark-image" />
+                <div className="bookmark-details">
+                  <h2 className="bookmark-name">{bm.name}</h2>
+                  <p className="bookmark-description">{bm.description}</p>
+                  <p className="bookmark-price">₹{bm.price.toFixed(2)}</p>
+
+                  <div className="quantity-controls">
+                    <button
+                      className="quantity-btn"
+                      onClick={() => handleQuantityChange(bm.id, -1)}
+                    >
+                      −
+                    </button>
+                    <span className="quantity-display">{bm.quantity}</span>
+                    <button
+                      className="quantity-btn"
+                      onClick={() => handleQuantityChange(bm.id, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="bookmark-actions">
                     <button
                       className="add-to-cart-btn"
                       onClick={() => handleAddToCart(bm)}
                     >
-                      Add to Cart
+                      🛒 Add to Cart
+                    </button>
+                    <button
+                      className="wishlist-btn"
+                      onClick={() => handleSaveToWishlist(bm)}
+                    >
+                      ❤️ Save to Wishlist
                     </button>
                   </div>
                 </div>
@@ -583,6 +669,8 @@ const BookmarkPage = () => {
             ))}
           </div>
         </div>
+
+        {notification && <div className="notification">{notification}</div>}
       </div>
     </>
   );

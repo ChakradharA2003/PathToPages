@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// The main component for displaying the potli bag product grid.
-const PotliPage = () => {
-
+const Potli = () => {
   const navigate = useNavigate();
-  
-  // State to hold the list of potli bags with their details.
+
   const [potliBags, setPotliBags] = useState([
     {
       id: 301,
@@ -47,12 +44,9 @@ const PotliPage = () => {
     },
   ]);
 
-  // State for the notification message
   const [notification, setNotification] = useState("");
-  // State for the dark mode toggle
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Function to handle quantity changes for a specific potli bag item.
   const handleQuantityChange = (id, amount) => {
     setPotliBags((prev) =>
       prev.map((potliBag) =>
@@ -63,7 +57,6 @@ const PotliPage = () => {
     );
   };
 
-  // Function to handle adding a potli bag to the shopping cart.
   const handleAddToCart = (potliBag) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existing = cart.find((item) => item.id === potliBag.id);
@@ -75,571 +68,608 @@ const PotliPage = () => {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-
     setNotification(`${potliBag.name} has been added to your cart!`);
     setTimeout(() => {
       setNotification("");
       navigate("/cart");
     }, 1500);
   };
- // Save journal to wishlist
-  const handleSaveToWishlist = (journal) => {
+
+  const handleSaveToWishlist = (potliBag) => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const existing = wishlist.find((item) => item.id === journal.id);
+    const existing = wishlist.find((item) => item.id === potliBag.id);
 
     if (!existing) {
-      wishlist.push(journal);
+      wishlist.push(potliBag);
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
     }
-
     navigate("/wishlist");
   };
-  // Toggles the theme between light and dark
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-   return (
-    // The 'className' changes based on the 'isDarkMode' state, which triggers the CSS for dark mode.
+  return (
     <>
-      <style>
-        {`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
 
-    html { scroll-behavior: smooth; }
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-    .potli-page {
-      font-family: 'Poppins', sans-serif;
-      background-color: #fdf6f6;
-      padding: 4rem 2rem;
-      min-height: 100vh;
-      color: #4a2d3e;
-      transition: background-color 0.4s, color 0.4s;
-      position: relative;
-    }
-    
-    /* Dark Mode Styles */
-    .potli-page.dark-mode {
-        background-color: #1a1d24;
-        color: #e0e0e0;
-    }
-    .potli-page.dark-mode .potli-header h1 {
-        color: #ffffff;
-    }
-    .potli-page.dark-mode .potli-header p {
-        color: #a0a0a0;
-    }
-    .potli-page.dark-mode .potli-card {
-        background-color: #2c303a;
-        color: #e0e0e0;
-        border-color: #4a4f5a;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-    .potli-page.dark-mode .potli-info h3 {
-        color: #ffffff;
-    }
-    .potli-page.dark-mode .potli-info p {
-        color: #a0a0a0;
-    }
-    .potli-page.dark-mode .potli-price {
-        color: #e5b8a5;
-    }
-    .potli-page.dark-mode .quantity-control {
-        border-color: #4a4f5a;
-    }
-    .potli-page.dark-mode .quantity-control button {
-        color: #e0e0e0;
-    }
-    .potli-page.dark-mode .add-to-cart-btn {
-        background-color: #4a4f5a;
-        border-color: #4a4f5a;
-        color: #ffffff;
-    }
-    .potli-page.dark-mode .add-to-cart-btn:hover {
-        background-color: #5a5f6a;
-    }
-    .potli-page.dark-mode .styled-wrapper .button:before {
-        border-color: #ffffff;
-    }
-    .potli-page.dark-mode .button-elem svg {
-        fill: #ffffff;
-    }
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #3b3a30;
-        color: #fff;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        z-index: 1001;
-        animation: slideIn 0.5s ease forwards;
-    }
+        body {
+          font-family: 'Georgia', serif;
+        }
 
-    @keyframes slideIn {
-        from { transform: translateX(100%); }
-        to { transform: translateX(0); }
-    }
+        /* Light Theme - Home.jsx Colors */
+        .potli-page {
+          min-height: 100vh;
+          background: #fdf8f0;
+          color: #5c544b;
+          padding: 40px 20px;
+          transition: background 0.3s ease, color 0.3s ease;
+        }
 
-    .potli-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        /* Dark Theme - Home.jsx Colors */
+        .potli-page.dark-mode {
+          background: #1a1b2a;
+          color: #fdf8f0;
+        }
 
-    .potli-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
+        .potli-page.dark-mode .potli-card {
+          background: #2c2e43;
+          border-color: rgba(255, 255, 255, 0.12);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
 
-    .potli-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem;
-      color: #4a2d3e;
-      margin: 0;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .potli-card:hover {
+          border-color: #b99a6b;
+          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
 
-    .potli-header p {
-      font-size: 1.2rem;
-      color: #7d6b79;
-      margin-top: 0.5rem;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .potli-name {
+          color: #fdf8f0;
+        }
 
-    .potli-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.5rem;
-    }
+        .potli-page.dark-mode .potli-description {
+          color: rgba(253, 248, 240, 0.8);
+        }
 
-    .potli-card {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-      border: 1px solid #f2e0e0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s, color 0.4s;
-    }
+        .potli-page.dark-mode .quantity-btn {
+          background: #2c2e43;
+          border-color: #b99a6b;
+          color: #b99a6b;
+        }
 
-    .potli-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
-    }
+        .potli-page.dark-mode .quantity-btn:hover {
+          background: #b99a6b;
+          color: #1a1b2a;
+        }
 
-    .potli-image img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-    }
+        .potli-page.dark-mode .add-to-cart-btn {
+          background: #c97b63;
+        }
 
-    .potli-info {
-      padding: 1.5rem;
-      text-align: center;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
+        .potli-page.dark-mode .add-to-cart-btn:hover {
+          background: #d88c75;
+        }
 
-    .potli-info h3 {
-      font-family: 'Playfair Display', serif;
-      margin: 0 0 0.5rem;
-      font-size: 1.4rem;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .wishlist-btn {
+          border-color: #e07a5f;
+          color: #e07a5f;
+        }
 
-    .potli-info p {
-      color: #7d6b79;
-      flex-grow: 1;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .wishlist-btn:hover {
+          background: #e07a5f;
+          color: #1a1b2a;
+        }
 
-    .potli-price {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #c14953;
-      margin: 1rem 0;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .back-btn:before {
+          border-color: #fdf8f0;
+        }
 
-    .controls-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      margin-top: auto;
-      flex-wrap: wrap;
-    }
+        .potli-page.dark-mode .back-btn:after {
+          border-color: #b99a6b;
+        }
 
-    .quantity-control {
-      display: flex;
-      align-items: center;
-      border: 1px solid #f2e0e0;
-      border-radius: 50px;
-      transition: border-color 0.4s;
-    }
+        .potli-page.dark-mode .button-elem svg path {
+          fill: #fdf8f0;
+        }
 
-    .quantity-control button {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      color: #4a2d3e;
-      transition: color 0.4s;
-    }
+        .potli-page.dark-mode .notification {
+          background: #2c2e43;
+          color: #fdf8f0;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
 
-    .add-to-cart-btn {
-      padding: 0.8rem 1.5rem;
-      border: 1px solid #c14953;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      background-color: #c14953;
-      color: #fff;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
+        /* Container */
+        .potli-container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
 
-    .add-to-cart-btn:hover {
-      background-color: #a13c45;
-    }
-    
-    /* --- Back Button Styles --- */
-    .styled-wrapper {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1000;
-    }
-    .styled-wrapper .button {
-      display: block;
-      position: relative;
-      width: 56px;
-      height: 56px;
-      margin: 0;
-      overflow: hidden;
-      outline: none;
-      background-color: transparent;
-      cursor: pointer;
-      border: 0;
-    }
+        /* Header */
+        .potli-header {
+          text-align: center;
+          margin-bottom: 40px;
+        }
 
-    .styled-wrapper .button:before {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      inset: 7px;
-      border: 3px solid #4a2d3e;
-      transition:
-        opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms,
-        transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms,
-        border-color 0.4s;
-    }
+        .potli-header h1 {
+          font-family: 'Playfair Display', serif;
+          font-size: 3rem;
+          color: #5c544b;
+          margin-bottom: 10px;
+        }
 
-    .styled-wrapper .button:after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      inset: 7px;
-      border: 4px solid #599a53;
-      transform: scale(1.3);
-      transition:
-        opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
-        transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      opacity: 0;
-    }
+        .potli-page.dark-mode .potli-header h1 {
+          color: #fdf8f0;
+        }
 
-    .styled-wrapper .button:hover:before,
-    .styled-wrapper .button:focus:before {
-      opacity: 0;
-      transform: scale(0.7);
-    }
+        .potli-header p {
+          font-size: 1.1rem;
+          color: #5c544b;
+          opacity: 0.8;
+        }
 
-    .styled-wrapper .button:hover:after,
-    .styled-wrapper .button:focus:after {
-      opacity: 1;
-      transform: scale(1);
-    }
+        .potli-page.dark-mode .potli-header p {
+          color: #fdf8f0;
+        }
 
-    .styled-wrapper .button-box {
-      display: flex;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+        /* Grid */
+        .potli-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 30px;
+        }
 
-    .styled-wrapper .button-elem {
-      display: block;
-      width: 20px;
-      height: 20px;
-      margin: 18px;
-      transform: rotate(360deg);
-    }
-    
-    .styled-wrapper .button-elem svg {
-        fill: #4a2d3e;
-        transition: fill 0.4s;
-    }
+        /* Card */
+        .potli-card {
+          background: #fff;
+          border: 2px solid rgba(185, 154, 107, 0.2);
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+          display: flex;
+          flex-direction: column;
+        }
 
-    .styled-wrapper .button:hover .button-box,
-    .styled-wrapper .button:focus .button-box {
-      transition: 0.4s;
-      transform: translateX(-56px);
-    }
+        .potli-card:hover {
+          transform: translateY(-5px);
+          border-color: #b99a6b;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-    /* --- Theme Toggle Switch Styles --- */
-    .theme-toggle-wrapper {
-        position: absolute;
-        top: 1.5rem;
-        right: 2rem;
-        z-index: 1000;
-    }
-    
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
+        .potli-image {
+          width: 100%;
+          height: 250px;
+          object-fit: cover;
+          border-bottom: 2px solid #b99a6b;
+        }
 
-    .switch #theme-toggle-input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+        .potli-details {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          flex-grow: 1;
+        }
 
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #2196f3;
-      transition: 0.4s;
-      z-index: 0;
-      overflow: hidden;
-    }
+        .potli-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.5rem;
+          color: #5c544b;
+          font-weight: 700;
+        }
 
-    .sun-moon {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: yellow;
-      transition: 0.4s;
-    }
+        .potli-description {
+          font-size: 0.95rem;
+          color: #5c544b;
+          opacity: 0.8;
+          line-height: 1.5;
+          flex-grow: 1;
+        }
 
-    #theme-toggle-input:checked + .slider {
-      background-color: black;
-    }
+        .potli-price {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #c97b63;
+          margin: 10px 0;
+        }
 
-    #theme-toggle-input:checked + .slider .sun-moon {
-      transform: translateX(26px);
-      background-color: white;
-      animation: rotate-center 0.6s ease-in-out both;
-    }
+        /* Quantity Controls */
+        .quantity-controls {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          justify-content: center;
+          margin: 15px 0;
+        }
 
-    .moon-dot {
-      opacity: 0;
-      transition: 0.4s;
-      fill: gray;
-    }
+        .quantity-btn {
+          width: 36px;
+          height: 36px;
+          border: 2px solid #b99a6b;
+          background: #fff;
+          color: #b99a6b;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        }
 
-    #theme-toggle-input:checked + .slider .sun-moon .moon-dot {
-      opacity: 1;
-    }
+        .quantity-btn:hover {
+          background: #b99a6b;
+          color: #fff;
+          transform: scale(1.1);
+        }
 
-    .slider.round {
-      border-radius: 34px;
-    }
+        .quantity-display {
+          font-size: 1.2rem;
+          font-weight: 600;
+          min-width: 40px;
+          text-align: center;
+          color: #5c544b;
+        }
 
-    .slider.round .sun-moon {
-      border-radius: 50%;
-    }
-    #moon-dot-1 { left: 10px; top: 3px; position: absolute; width: 6px; height: 6px; z-index: 4; }
-    #moon-dot-2 { left: 2px; top: 10px; position: absolute; width: 10px; height: 10px; z-index: 4; }
-    #moon-dot-3 { left: 16px; top: 18px; position: absolute; width: 3px; height: 3px; z-index: 4; }
+        .potli-page.dark-mode .quantity-display {
+          color: #fdf8f0;
+        }
 
-    .cloud-light, .cloud-dark {
-      position: absolute;
-      animation-name: cloud-move;
-      animation-duration: 6s;
-      animation-iteration-count: infinite;
-    }
-    .cloud-light { fill: #eee; }
-    .cloud-dark { fill: #ccc; animation-delay: 1s; }
+        /* Buttons */
+        .potli-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
 
-    #cloud-1 { left: 30px; top: 15px; width: 40px; }
-    #cloud-2 { left: 44px; top: 10px; width: 20px; }
-    #cloud-3 { left: 18px; top: 24px; width: 30px; }
-    #cloud-4 { left: 36px; top: 18px; width: 40px; }
-    #cloud-5 { left: 48px; top: 14px; width: 20px; }
-    #cloud-6 { left: 22px; top: 26px; width: 30px; }
+        .add-to-cart-btn {
+          width: 100%;
+          padding: 12px;
+          background: #c97b63;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: 'Georgia', serif;
+        }
 
-    @keyframes cloud-move {
-      0%, 100% { transform: translateX(0px); }
-      50% { transform: translateX(5px); }
-    }
+        .add-to-cart-btn:hover {
+          background: #d88c75;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(201, 123, 99, 0.4);
+        }
 
-    .stars {
-      transform: translateY(-32px);
-      opacity: 0;
-      transition: 0.4s;
-    }
+        .wishlist-btn {
+          width: 100%;
+          padding: 12px;
+          background: transparent;
+          color: #c97b63;
+          border: 2px solid #c97b63;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: 'Georgia', serif;
+        }
 
-    .star {
-      fill: white;
-      position: absolute;
-      transition: 0.4s;
-      animation-name: star-twinkle;
-      animation-duration: 2s;
-      animation-iteration-count: infinite;
-    }
+        .wishlist-btn:hover {
+          background: #c97b63;
+          color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(201, 123, 99, 0.4);
+        }
 
-    #theme-toggle-input:checked + .slider .stars {
-      transform: translateY(0);
-      opacity: 1;
-    }
+        /* Back Button */
+        .back-button-wrapper {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          z-index: 1000;
+        }
 
-    #star-1 { width: 20px; top: 2px; left: 3px; animation-delay: 0.3s; }
-    #star-2 { width: 6px; top: 16px; left: 3px; }
-    #star-3 { width: 12px; top: 20px; left: 10px; animation-delay: 0.6s; }
-    #star-4 { width: 18px; top: 0px; left: 18px; animation-delay: 1.3s; }
+        .back-btn {
+          display: block;
+          position: relative;
+          width: 60px;
+          height: 60px;
+          overflow: hidden;
+          outline: none;
+          background-color: transparent;
+          cursor: pointer;
+          border: 0;
+          transition: transform 0.3s ease;
+        }
 
-    @keyframes star-twinkle {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-    }
-    
-    @keyframes rotate-center {
-      0% { transform: translateX(0) rotate(0); }
-      100% { transform: translateX(26px) rotate(360deg); }
-    }
-    
-    @media (max-width: 600px) {
-        .potli-page { padding: 4rem 1rem; }
-        .potli-header h1 { font-size: 2.5rem; }
-        .potli-header p { font-size: 1rem; }
-        .potli-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-        .styled-wrapper { top: 0.5rem; left: 0.5rem; }
-        .theme-toggle-wrapper { top: 1rem; right: 1rem; }
-    }
-`}
-      </style>
+        .back-btn:hover {
+          transform: scale(1.05);
+        }
+
+        .back-btn:before {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          inset: 6px;
+          border: 3px solid #5c544b;
+          transition: opacity 0.4s cubic-bezier(0.77, 0, 0.175, 1) 80ms,
+            transform 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 80ms;
+        }
+
+        .back-btn:after {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          inset: 6px;
+          border: 4px solid #b99a6b;
+          transform: scale(1.3);
+          transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+            transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          opacity: 0;
+        }
+
+        .back-btn:hover:before,
+        .back-btn:focus:before {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+
+        .back-btn:hover:after,
+        .back-btn:focus:after {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .button-box {
+          display: flex;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+
+        .button-elem {
+          display: block;
+          width: 24px;
+          height: 24px;
+          margin: 18px 15px 0 18px;
+          transform: rotate(360deg);
+        }
+
+        .button-elem svg path {
+          fill: #5c544b;
+        }
+
+        .back-btn:hover .button-box,
+        .back-btn:focus .button-box {
+          transition: 0.4s;
+          transform: translateX(-57px);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-wrapper {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000;
+        }
+
+        .theme-checkbox {
+          --toggle-size: 12px;
+          appearance: none;
+          width: 6.25em;
+          height: 3.125em;
+          background: linear-gradient(to right, #fdf8f0 50%, #1a1b2a 50%) no-repeat;
+          background-size: 205%;
+          background-position: 0;
+          transition: 0.4s;
+          border-radius: 99em;
+          position: relative;
+          cursor: pointer;
+          font-size: var(--toggle-size);
+          border: 2px solid #b99a6b;
+        }
+
+        .theme-checkbox::before {
+          content: "";
+          width: 2.25em;
+          height: 2.25em;
+          position: absolute;
+          top: 0.438em;
+          left: 0.438em;
+          background: #b99a6b;
+          border-radius: 50%;
+          transition: 0.4s;
+        }
+
+        .theme-checkbox:checked::before {
+          left: calc(100% - 2.25em - 0.438em);
+          background: #e07a5f;
+        }
+
+        .theme-checkbox:checked {
+          background-position: 100%;
+        }
+
+        /* Notification */
+        .notification {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #fff;
+          color: #5c544b;
+          padding: 20px 40px;
+          border-radius: 8px;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          font-size: 1.1rem;
+          font-weight: 600;
+          z-index: 2000;
+          border: 2px solid #b99a6b;
+          animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .potli-header h1 {
+            font-size: 2rem;
+          }
+
+          .potli-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .back-button-wrapper,
+          .theme-toggle-wrapper {
+            top: 10px;
+          }
+
+          .back-button-wrapper {
+            left: 10px;
+          }
+
+          .theme-toggle-wrapper {
+            right: 10px;
+          }
+
+          .back-btn {
+            width: 50px;
+            height: 50px;
+          }
+
+          .button-elem {
+            width: 20px;
+            height: 20px;
+            margin: 15px 12px 0 15px;
+          }
+
+          .back-btn:hover .button-box,
+          .back-btn:focus .button-box {
+            transform: translateX(-47px);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .potli-page {
+            padding: 20px 10px;
+          }
+
+          .potli-header h1 {
+            font-size: 1.8rem;
+          }
+
+          .potli-header p {
+            font-size: 1rem;
+          }
+
+          .potli-card {
+            margin: 0 10px;
+          }
+        }
+      `}</style>
+
       <div className={`potli-page ${isDarkMode ? "dark-mode" : ""}`}>
-        <div className="styled-wrapper">
-          <button className="button" onClick={() => window.history.back()}>
+        {/* Back Button */}
+        <div className="back-button-wrapper">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
             <div className="button-box">
               <span className="button-elem">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                <svg viewBox="0 0 46 40" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"></path>
                 </svg>
               </span>
               <span className="button-elem">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
+                <svg viewBox="0 0 46 40">
+                  <path d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"></path>
                 </svg>
               </span>
             </div>
           </button>
         </div>
 
+        {/* Theme Toggle */}
         <div className="theme-toggle-wrapper">
-          <label className="switch">
-            <input
-              id="theme-toggle-input"
-              type="checkbox"
-              checked={isDarkMode}
-              onChange={toggleTheme}
-            />
-            <div className="slider round">
-              <div className="sun-moon">
-                <svg id="moon-dot-1" className="moon-dot" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="moon-dot-2" className="moon-dot" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="moon-dot-3" className="moon-dot" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-1" className="cloud-dark" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-2" className="cloud-dark" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-3" className="cloud-dark" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-4" className="cloud-light" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-5" className="cloud-light" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-                <svg id="cloud-6" className="cloud-light" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-              </div>
-              <div className="stars">
-                <svg id="star-1" className="star" viewBox="0 0 20 20">
-                  <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
-                </svg>
-                <svg id="star-2" className="star" viewBox="0 0 20 20">
-                  <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
-                </svg>
-                <svg id="star-3" className="star" viewBox="0 0 20 20">
-                  <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
-                </svg>
-                <svg id="star-4" className="star" viewBox="0 0 20 20">
-                  <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
-                </svg>
-              </div>
-            </div>
-          </label>
+          <input
+            type="checkbox"
+            className="theme-checkbox"
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            aria-label="Toggle dark mode"
+          />
         </div>
 
-        {notification && <div className="notification">{notification}</div>}
         <div className="potli-container">
-          <header className="potli-header">
-            <h1>Artisanal Potli Bags</h1>
-            <p>Carry your essentials in style.</p>
-          </header>
+          <div className="potli-header">
+            <h1>Artisan Potli Bags</h1>
+            <p>Exquisite handcrafted bags for every occasion.</p>
+          </div>
 
           <div className="potli-grid">
             {potliBags.map((potli) => (
               <div key={potli.id} className="potli-card">
-                <div className="potli-image">
-                  <img src={potli.image} alt={potli.name} />
-                </div>
-                <div className="potli-info">
-                  <h3>{potli.name}</h3>
-                  <p>{potli.description}</p>
-                  <div className="potli-price">₹{potli.price.toFixed(2)}</div>
-                  <div className="controls-container">
-                    <div className="quantity-control">
-                      <button
-                        onClick={() => handleQuantityChange(potli.id, -1)}
-                      >
-                        −
-                      </button>
-                      <span>{potli.quantity}</span>
-                      <button onClick={() => handleQuantityChange(potli.id, 1)}>
-                        +
-                      </button>
-                    </div>
+                <img
+                  src={potli.image}
+                  alt={potli.name}
+                  className="potli-image"
+                />
+                <div className="potli-details">
+                  <h2 className="potli-name">{potli.name}</h2>
+                  <p className="potli-description">{potli.description}</p>
+                  <p className="potli-price">₹{potli.price.toFixed(2)}</p>
+
+                  <div className="quantity-controls">
+                    <button
+                      className="quantity-btn"
+                      onClick={() => handleQuantityChange(potli.id, -1)}
+                    >
+                      −
+                    </button>
+                    <span className="quantity-display">{potli.quantity}</span>
+                    <button
+                      className="quantity-btn"
+                      onClick={() => handleQuantityChange(potli.id, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="potli-actions">
                     <button
                       className="add-to-cart-btn"
                       onClick={() => handleAddToCart(potli)}
                     >
-                      Add to Cart
+                      🛒 Add to Cart
+                    </button>
+                    <button
+                      className="wishlist-btn"
+                      onClick={() => handleSaveToWishlist(potli)}
+                    >
+                      ❤️ Save to Wishlist
                     </button>
                   </div>
                 </div>
@@ -647,9 +677,11 @@ const PotliPage = () => {
             ))}
           </div>
         </div>
+
+        {notification && <div className="notification">{notification}</div>}
       </div>
     </>
   );
 };
 
-export default PotliPage;
+export default Potli;
