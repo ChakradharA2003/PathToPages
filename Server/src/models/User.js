@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema(
     mobile: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     fullAddress: { type: String, required: true },
-    cart: { type: Object, default: {} },
+    cart: { type: Array, default: [] },
   },
   { timestamps: true }
 );

@@ -72,6 +72,7 @@ app.use('/api/v1/auth', require('./src/routes/auth'));
 app.use('/api/v1/products', require('./src/routes/products'));
 // app.use('/api/v1/orders', require('./src/routes/orders'));
 app.use('/api/v1/admin', require('./src/routes/admin'));
+app.use('/api/v1/user', require('./src/routes/user'));
 
 // razorpay webhook (raw)
 // app.post('/api/v1/webhook/razorpay', express.json({ verify: rawBodySaver }), require('./src/controllers/orderController').webhook);
