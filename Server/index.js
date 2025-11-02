@@ -3,7 +3,6 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const path = require('path');
-const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const fs = require('fs');
 
@@ -31,7 +30,6 @@ app.use(helmet({
 
 app.use(cors());
 app.use(morgan('combined', { stream: { write: (s) => logger.info(s.trim()) } }));
-app.use(rateLimit({ windowMs: 60 * 1000, max: 200 }));
 
 // connect db
 connectDB(process.env.MONGO_URI);

@@ -76,7 +76,9 @@ exports.removeCartItem = asyncHandler(async (req, res) => {
   }
 
   const existingItem = user.cart.find(
-  item => item.productId?.toString() === productId.toString()
+  item => {
+    console.log('Comparing item ID:', item._id.toString());
+    return item._id?.toString() === productId.toString()}
 );
 
   if (!existingItem) {
@@ -86,7 +88,7 @@ exports.removeCartItem = asyncHandler(async (req, res) => {
   }
 
   user.cart = user.cart.filter(item => {
-  return item.productId?.toString() !== productId.toString();
+  return item._id?.toString() !== productId.toString();
 });
 
   await user.save();
